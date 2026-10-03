@@ -1,0 +1,1702 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#15202B">
+<meta name="description" content="سجل فريق السلامة: الملاحظات، الحوادث، التقارير اليومية، ومؤشرات الأداء">
+<title>منظومة السلامة الميدانية</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: field-ops console. Right-hand nav rail (RTL), a site "days without LTI" board up top, records open in sheets. */
+:root{
+  --bg:#F1F3F5; --surface:#FFFFFF; --surface-2:#F6F8F9; --ink:#15202B; --muted:#5A6774; --line:#DCE2E7;
+  --accent:#1B5EA8; --accent-ink:#FFFFFF; --accent-soft:#E4EDF8;
+  --ok:#1C8654; --ok-soft:#E2F3EA; --warn:#9A6400; --warn-soft:#FBF0D9; --high:#BF4F0E; --high-soft:#FCE8DB; --crit:#BC2323; --crit-soft:#FBE2E2;
+  --hz-y:#F5C211; --hz-k:#15202B;
+  --board-bg:#15202B; --board-ink:#E9EEF2; --board-muted:#A7B3BE; --board-num:#F5C211; --board-line:#2A3846;
+  --scrim:rgba(12,18,24,.52);
+  --shadow:0 1px 2px rgba(21,32,43,.06),0 10px 30px rgba(21,32,43,.12);
+  --f-display:"Readex Pro","IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1318; --surface:#141C23; --surface-2:#19232C; --ink:#E5EBF0; --muted:#94A2AF; --line:#25323E;
+    --accent:#62A2E8; --accent-ink:#0D1318; --accent-soft:#16283B;
+    --ok:#46C08B; --ok-soft:#11281E; --warn:#E2AD47; --warn-soft:#2A2212; --high:#F08B50; --high-soft:#2E1B11; --crit:#F06767; --crit-soft:#2E1617;
+    --hz-y:#E9BA10; --hz-k:#0D1318;
+    --board-bg:#19232C; --board-ink:#E9EEF2; --board-muted:#94A2AF; --board-num:#F5C211; --board-line:#2C3A47;
+    --scrim:rgba(0,0,0,.6);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1318; --surface:#141C23; --surface-2:#19232C; --ink:#E5EBF0; --muted:#94A2AF; --line:#25323E;
+  --accent:#62A2E8; --accent-ink:#0D1318; --accent-soft:#16283B;
+  --ok:#46C08B; --ok-soft:#11281E; --warn:#E2AD47; --warn-soft:#2A2212; --high:#F08B50; --high-soft:#2E1B11; --crit:#F06767; --crit-soft:#2E1617;
+  --hz-y:#E9BA10; --hz-k:#0D1318;
+  --board-bg:#19232C; --board-ink:#E9EEF2; --board-muted:#94A2AF; --board-num:#F5C211; --board-line:#2C3A47;
+  --scrim:rgba(0,0,0,.6);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+html{-webkit-tap-highlight-color:transparent}
+.gate{position:fixed;inset:0;z-index:80;background:var(--board-bg);display:flex;align-items:center;justify-content:center;padding:24px 16px;overflow:auto}
+.gate::before{content:"";position:fixed;inset-inline:0;top:0;height:6px;background:repeating-linear-gradient(-45deg,var(--hz-y) 0 9px,var(--hz-k) 9px 18px)}
+.gate-card{background:var(--surface);color:var(--ink);border-radius:14px;padding:28px 22px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.gate-card h1{font-family:var(--f-display);font-size:21px;font-weight:600;margin:0;line-height:1.35}
+.gate-card p{margin:0;color:var(--muted);font-size:14px}
+.gate-mark{width:52px;height:52px;border-radius:12px;background:var(--hz-k);color:var(--hz-y);display:grid;place-items:center}
+.gate-mark svg{width:30px;height:30px}
+.gate-form{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.gate-form .btn.primary{padding:12px;font-size:15px}
+.gate-form .link{align-self:center}
+.gate-err{margin:0;color:var(--crit)!important;font-size:13px;font-weight:600}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65}
+button,input,select,textarea{font:inherit;color:inherit}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+h1,h2,h3{text-wrap:balance}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.abbr{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;direction:ltr;unicode-bidi:isolate}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.hazard{height:5px;background:repeating-linear-gradient(-45deg,var(--hz-y) 0 9px,var(--hz-k) 9px 18px)}
+.topbar-in{display:flex;align-items:center;gap:12px;padding:9px 16px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{width:36px;height:36px;border-radius:8px;background:var(--hz-k);color:var(--hz-y);display:grid;place-items:center;flex:none}
+.brand-txt{min-width:0}
+.brand-name{font-family:var(--f-display);font-weight:600;font-size:16px;line-height:1.25}
+.brand-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:22rem}
+.spacer{flex:1}
+.sync{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.sync.shared i{background:var(--ok)} .sync.local i{background:var(--warn)} .sync.err i{background:var(--crit)}
+.me-chip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding-block:3px;padding-inline:4px 12px;cursor:pointer;min-width:0;text-align:start}
+.me-chip:hover{border-color:var(--muted)}
+.me-chip .nm{font-size:13px;font-weight:600;line-height:1.2;max-width:10rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me-chip .rl{font-size:11px;color:var(--muted);line-height:1.2}
+.me-chip.ask{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:var(--accent-soft);color:var(--accent);flex:none;font-family:var(--f-display)}
+.av.mgr{background:var(--hz-k);color:var(--hz-y)}
+.av.eng{background:var(--ok-soft);color:var(--ok)}
+.av.lg{width:42px;height:42px;font-size:16px}
+
+/* shell */
+.shell{display:grid;grid-template-columns:224px minmax(0,1fr);align-items:start}
+.side{background:var(--surface);border-inline-end:1px solid var(--line);padding:16px 10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 60px);min-height:calc(100vh - 60px)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:0;background:none;color:var(--muted);cursor:pointer;text-align:start;font-weight:500;font-size:14px}
+.nav button:hover{background:var(--surface-2);color:var(--ink)}
+.nav button[aria-current="page"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.nav .cnt{margin-inline-start:auto;font-size:12px;font-weight:600;min-width:22px;text-align:center;padding:0 6px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.nav .cnt.hot{background:var(--crit-soft);color:var(--crit)}
+.side-foot{margin-top:24px;padding:12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+main{padding-block:22px 48px;padding-inline:24px;min-width:0}
+.tabbar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabbar button{display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;color:var(--muted);font-size:11px;padding:4px 0;cursor:pointer;position:relative}
+.tabbar button[aria-current="page"]{color:var(--accent);font-weight:600}
+.tabbar .dot{position:absolute;top:2px;inset-inline-start:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--crit);color:#fff;font-size:10px;line-height:16px;font-weight:600}
+
+/* page header */
+.ph{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-bottom:18px}
+.ph h1{font-family:var(--f-display);font-weight:600;font-size:24px;line-height:1.3;margin:0}
+.ph p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.ph .actions{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;padding:9px 14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500;font-size:14px;line-height:1.2;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--crit)}
+.btn.danger-solid{background:var(--crit);border-color:var(--crit);color:#fff;font-weight:600}
+.btn.ok{color:var(--ok)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn.ghost{border-color:transparent;background:none}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.icon-btn{border:0;background:none;padding:6px;border-radius:8px;cursor:pointer;color:var(--muted)}
+.icon-btn:hover{background:var(--surface-2);color:var(--ink)}
+
+/* surfaces */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.panel h2{font-family:var(--f-display);font-size:15px;font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.panel h2 .more{margin-inline-start:auto;font-family:var(--f-body);font-size:13px;font-weight:500}
+.link{border:0;background:none;color:var(--accent);cursor:pointer;padding:0;font-size:13px;font-weight:500}
+.link:hover{text-decoration:underline}
+.stack{display:flex;flex-direction:column;gap:16px}
+.g-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px}
+.g-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.g-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:1080px){.g-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}.g-hero,.g-2{grid-template-columns:minmax(0,1fr)}}
+
+/* board */
+.board{background:var(--board-bg);color:var(--board-ink);border-radius:12px;padding:20px 22px 18px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.board::after{content:"";position:absolute;inset-inline:0;bottom:0;height:6px;background:repeating-linear-gradient(-45deg,var(--hz-y) 0 9px,transparent 9px 18px);opacity:.9}
+.board-label{font-size:14px;color:var(--board-muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.board-num{font-family:var(--f-display);font-weight:700;font-size:clamp(60px,10vw,92px);line-height:1;color:var(--board-num);font-variant-numeric:tabular-nums}
+.board-num small{font-size:18px;font-weight:500;color:var(--board-muted);margin-inline-start:8px}
+.board-row{display:flex;flex-wrap:wrap;gap:8px 28px;font-size:12px;color:var(--board-muted);border-top:1px solid var(--board-line);padding-top:12px;margin-bottom:6px}
+.board-row b{display:block;font-family:var(--f-display);font-size:18px;font-weight:600;color:var(--board-ink);font-variant-numeric:tabular-nums}
+.board-note{margin:0;font-size:12px;color:var(--board-muted)}
+
+/* kpi */
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .k-l{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.kpi .k-v{font-family:var(--f-display);font-size:28px;font-weight:600;line-height:1.25;font-variant-numeric:tabular-nums}
+.kpi .k-s{font-size:12px;color:var(--muted)}
+.kpi.alert .k-v{color:var(--crit)}
+button.kpi{text-align:start;cursor:pointer;font:inherit;color:inherit}
+button.kpi:hover{border-color:var(--muted)}
+
+/* chips & pills */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding-block:3px;padding-inline:3px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;background:var(--surface)}
+.chip .av{width:22px;height:22px;font-size:11px}
+.chip.done{border-color:var(--ok);background:var(--ok-soft)}
+.chip.done .st{color:var(--ok);font-weight:600}
+.chip .st{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:1px 9px;border-radius:999px;line-height:1.6;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-high{background:var(--high-soft);color:var(--high)} .p-crit{background:var(--crit-soft);color:var(--crit)}
+.p-accent{background:var(--accent-soft);color:var(--accent)} .p-neutral{background:var(--surface-2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.tag{font-size:12px;color:var(--muted)}
+
+.today-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.today-strip div{font-size:12px;color:var(--muted);min-width:0}
+.today-strip b{display:block;font-family:var(--f-display);font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+@media (max-width:480px){.today-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:minmax(0,10rem) minmax(0,1fr) 2.2rem;gap:10px;align-items:center;font-size:13px}
+.bar-row .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-row .v{text-align:end;font-variant-numeric:tabular-nums;font-weight:600}
+.track{height:10px;background:var(--surface-2);border-radius:3px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
+.fill{height:100%;background:var(--accent);border-radius:3px}
+.seg{display:flex;height:16px;border-radius:4px;overflow:hidden;gap:2px;background:var(--surface-2)}
+.seg span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.legend div{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px;min-width:0}
+.legend b{font-family:var(--f-display);font-size:20px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.bg-ok{background:var(--ok)} .bg-warn{background:var(--warn)} .bg-high{background:var(--high)} .bg-crit{background:var(--crit)} .bg-accent{background:var(--accent)}
+
+/* records */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.segctl{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:2px}
+.segctl button{border:0;background:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--muted);white-space:nowrap}
+.segctl button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.segctl button .c{font-variant-numeric:tabular-nums;opacity:.8;margin-inline-start:4px}
+.filters .search{flex:1 1 200px;min-width:0}
+.filters select{width:auto;max-width:100%}
+.list{display:flex;flex-direction:column;gap:8px}
+.rec{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;min-width:0}
+.rec:hover{border-color:var(--muted)}
+.sev{width:5px;flex:none;background:var(--line)}
+.sev.ok{background:var(--ok)} .sev.warn{background:var(--warn)} .sev.high{background:var(--high)} .sev.crit{background:var(--crit)} .sev.good{background:var(--accent)} .sev.neutral{background:var(--line)}
+.rec-main{padding:11px 14px;min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}
+.rec-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.code{font-family:var(--f-mono);font-size:12px;color:var(--muted);direction:ltr;unicode-bidi:isolate}
+.rec-title{font-weight:600;overflow-wrap:anywhere}
+.rec-desc{margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.rec-meta{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:12px;color:var(--muted)}
+.rec-meta .ico{display:inline-flex;align-items:center;gap:4px}
+.rec-meta svg{width:14px;height:14px}
+.overdue{color:var(--crit);font-weight:600}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:28px 20px;text-align:center;color:var(--muted);font-size:14px;background:var(--surface)}
+.empty strong{display:block;color:var(--ink);font-family:var(--f-display);font-weight:600;font-size:16px;margin-bottom:4px}
+.empty .btn{margin-top:12px}
+.banner{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;border:1px solid var(--line);background:var(--surface)}
+.banner.warn{background:var(--warn-soft);border-color:transparent}
+.banner.info{background:var(--accent-soft);border-color:transparent}
+.banner.err{background:var(--crit-soft);border-color:transparent}
+.banner .btn{margin-inline-start:auto}
+
+/* tables */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{font-weight:600;color:var(--muted);text-align:start;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:12px}
+td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.nm{white-space:normal;min-width:8rem}
+td .sub{display:block;font-size:11px;color:var(--muted)}
+.zero{color:var(--muted)}
+
+/* attention list */
+.att{display:flex;flex-direction:column}
+.att-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.att-item:last-child{border-bottom:0}
+.att-item:hover .att-t{color:var(--accent)}
+.att-dot{width:9px;height:9px;border-radius:2px;margin-top:8px;flex:none}
+.att-body{min-width:0;flex:1}
+.att-t{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-m{font-size:12px;color:var(--muted)}
+
+/* daily */
+.daynav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.daynav input{width:auto}
+.day-sum{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.day-sum div{background:var(--surface);padding:12px 14px;font-size:12px;color:var(--muted);min-width:0}
+.day-sum b{display:block;font-family:var(--f-display);font-size:22px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+@media (max-width:900px){.day-sum{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.entries{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+@media (max-width:420px){.entries{grid-template-columns:minmax(0,1fr)}}
+.entry{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.entry-h{display:flex;align-items:center;gap:10px}
+.entry-h .who{min-width:0;flex:1}
+.entry-h .who b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.entry-h .who span{font-size:12px;color:var(--muted)}
+.entry-n{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.entry-n div{font-size:11px;color:var(--muted);min-width:0}
+.entry-n b{display:block;font-size:16px;font-family:var(--f-display);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.entry p{margin:0;font-size:13px;overflow-wrap:anywhere}
+.entry p .lbl{color:var(--muted);font-size:12px;display:block}
+.pending{margin-top:16px}
+
+/* team */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+@media (max-width:420px){.team-grid{grid-template-columns:minmax(0,1fr)}}
+.member{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.member-h{display:flex;gap:10px;align-items:center}
+.member-h .who{min-width:0;flex:1}
+.member-h .who b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.member-h .who b.placeholder{color:var(--muted);font-weight:500}
+.member-h .who span{font-size:12px;color:var(--muted)}
+.member dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13px}
+.member dt{color:var(--muted)}
+.member dd{margin:0;overflow-wrap:anywhere}
+.member-stats{display:flex;gap:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.member-stats b{font-family:var(--f-display);font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums;margin-inline-end:4px}
+.me-tag{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:0 7px;border-radius:999px}
+.section-h{display:flex;align-items:center;gap:10px;margin:22px 0 12px;flex-wrap:wrap}
+.section-h h2{font-family:var(--f-display);font-size:16px;font-weight:600;margin:0}
+.section-h .btn{margin-inline-start:auto}
+.settings-dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 20px;margin:0}
+.settings-dl div{min-width:0}
+.settings-dl dt{font-size:12px;color:var(--muted)}
+.settings-dl dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+@media (max-width:760px){.settings-dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* sheet */
+.sheet-wrap{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.sheet-backdrop{position:absolute;inset:0;background:var(--scrim)}
+.sheet{position:relative;background:var(--surface);border-radius:12px;width:min(700px,100%);max-height:100%;overflow:auto;box-shadow:var(--shadow);overscroll-behavior:contain}
+.sheet-head{position:sticky;top:0;z-index:2;background:var(--surface);padding:16px 20px 12px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px}
+.sheet-head > div{min-width:0;flex:1}
+.sheet-head h2{font-family:var(--f-display);font-size:18px;font-weight:600;margin:0;line-height:1.35}
+.sheet-head p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.sheet-head .rec-top{margin-bottom:6px}
+.sheet-body{padding:16px 20px 22px;display:flex;flex-direction:column;gap:16px}
+.sheet-foot{position:sticky;bottom:0;z-index:2;background:var(--surface);border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sheet-foot .end{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:640px){
+  .sheet-wrap{padding:0;align-items:flex-end}
+  .sheet{border-radius:14px 14px 0 0;max-height:94%;width:100%}
+  .sheet-foot{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+}
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;margin:0}
+.dl div{min-width:0}
+.dl dt{font-size:12px;color:var(--muted)}
+.dl dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+.block h3{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 4px}
+.block p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.closed-box{border:1px solid var(--ok);background:var(--ok-soft);border-radius:8px;padding:12px 14px}
+.closed-box h3{color:var(--ok)}
+.closed-box small{display:block;margin-top:6px;color:var(--muted);font-size:12px}
+.photo{border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--surface-2);min-height:60px;display:grid;place-items:center;font-size:13px;color:var(--muted)}
+.photo img{display:block;width:100%;max-height:420px;object-fit:contain;background:var(--surface-2)}
+.tl{list-style:none;margin:0;padding:0;padding-inline-start:16px;border-inline-start:2px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.tl li{position:relative;font-size:13px}
+.tl li::before{content:"";position:absolute;inset-inline-start:-21px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--muted);box-shadow:0 0 0 3px var(--surface)}
+.tl li.k-close::before{background:var(--ok)} .tl li.k-create::before{background:var(--accent)}
+.tl li .t{color:var(--muted);font-size:12px}
+.tl li p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.confirm-box{border:1px solid var(--crit);background:var(--crit-soft);border-radius:8px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;width:100%}
+.confirm-box p{margin:0;flex:1 1 200px;font-size:13px}
+
+/* forms */
+input,select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0;font-size:15px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+textarea{resize:vertical;line-height:1.6}
+input[type="file"]{padding:7px}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{padding:0}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.full{grid-column:1/-1}
+.f label,.f .lbl{font-size:13px;font-weight:600}
+.f .hint{font-size:12px;color:var(--muted)}
+.req::after{content:" *";color:var(--crit)}
+@media (max-width:560px){.fgrid{grid-template-columns:minmax(0,1fr)}}
+.choice{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.choice label{position:relative;display:inline-block}
+.choice input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.choice span{display:inline-block;padding:7px 13px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:var(--surface);font-weight:500}
+.choice input:checked + span{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.choice input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.choice input:checked + span.r-ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.choice input:checked + span.r-warn{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.choice input:checked + span.r-high{border-color:var(--high);background:var(--high-soft);color:var(--high)}
+.choice input:checked + span.r-crit{border-color:var(--crit);background:var(--crit-soft);color:var(--crit)}
+.who-list{display:flex;flex-direction:column;gap:6px}
+.who-btn{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;text-align:start;width:100%}
+.who-btn:hover{border-color:var(--accent)}
+.who-btn.cur{border-color:var(--accent);background:var(--accent-soft)}
+.who-btn .who{flex:1;min-width:0}
+.who-btn b{display:block;font-size:14px}
+.who-btn span{font-size:12px;color:var(--muted)}
+
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);width:max-content;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:90;font-size:14px;box-shadow:var(--shadow);text-align:center}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .tabbar{display:grid}
+  main{padding-block:16px calc(92px + env(safe-area-inset-bottom,0px));padding-inline:16px}
+  .brand-sub,.sync .lb{display:none}
+  .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .ph h1{font-size:21px}
+}
+@media (max-width:480px){
+  .me-chip .rl{display:none}
+  .me-chip .nm{max-width:6.5rem}
+  .brand-name{font-size:15px}
+  .legend{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bar-row{grid-template-columns:minmax(0,7.5rem) minmax(0,1fr) 2rem}
+  .dl{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: no-preference){
+  .sheet{animation:rise .18s ease-out}
+  @keyframes rise{from{transform:translateY(12px);opacity:.6}to{transform:none;opacity:1}}
+}
+</style>
+</head>
+<body>
+<div id="app" dir="rtl" lang="ar">
+  <header class="topbar">
+    <div class="hazard" aria-hidden="true"></div>
+    <div class="topbar-in">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="brand-txt">
+          <div class="brand-name">منظومة السلامة الميدانية</div>
+          <div class="brand-sub" id="brandSub">إدارة الصحة والسلامة والبيئة</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <span class="sync" id="sync"><i></i><span class="lb">جارٍ الاتصال</span></span>
+      <button class="me-chip ask" id="meChip" data-act="who" type="button"><span class="av">؟</span><span><span class="nm">اختر اسمك</span></span></button>
+    </div>
+  </header>
+  <div class="shell">
+    <aside class="side"><nav class="nav" id="sideNav" aria-label="الأقسام"></nav><div class="side-foot" id="sideFoot"></div></aside>
+    <main id="view"></main>
+  </div>
+  <nav class="tabbar" id="tabNav" aria-label="الأقسام"></nav>
+  <div class="sheet-wrap" id="sheetWrap" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <section class="sheet" role="dialog" aria-modal="true" id="sheet"><div id="sheetBody"></div></section>
+  </div>
+  <div class="gate" id="gate" hidden><div class="gate-card" id="gateCard"></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script>
+(() => {
+"use strict";
+document.documentElement.lang = "ar";
+document.documentElement.dir = "rtl";
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const today = () => ymd(new Date());
+const parseD = s => { const [y, m, d] = String(s).split("-").map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return ymd(d); };
+const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 86400000);
+const nowHM = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const fmtN = n => Number(n || 0).toLocaleString("en-US", {maximumFractionDigits: 1});
+const clone = o => JSON.parse(JSON.stringify(o));
+const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const LOC = (() => { try { new Intl.DateTimeFormat("ar-u-ca-gregory-nu-latn"); return "ar-u-ca-gregory-nu-latn"; } catch { return "ar"; } })();
+const dfShort = new Intl.DateTimeFormat(LOC, {day: "numeric", month: "short"});
+const dfMid = new Intl.DateTimeFormat(LOC, {weekday: "short", day: "numeric", month: "short"});
+const dfLong = new Intl.DateTimeFormat(LOC, {weekday: "long", day: "numeric", month: "long", year: "numeric"});
+const fmtD = s => s ? dfShort.format(parseD(s)) : "—";
+const fmtDM = s => s ? dfMid.format(parseD(s)) : "—";
+const fmtDL = s => s ? dfLong.format(parseD(s)) : "—";
+const fmtTs = ts => { if (!ts) return ""; const d = new Date(ts); return `${dfShort.format(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const daysTxt = n => n === 1 ? "يوم واحد" : n === 2 ? "يومان" : (n >= 3 && n <= 10) ? `${n} أيام` : `${n} يومًا`;
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+/* ---------- domain ---------- */
+const ROLES = {manager: "مدير السلامة", engineer: "مهندس السلامة", officer: "مسؤول سلامة"};
+const RISK = [
+  {k: "low", t: "منخفض", c: "ok", days: 7, w: 1},
+  {k: "med", t: "متوسط", c: "warn", days: 3, w: 2},
+  {k: "high", t: "عالٍ", c: "high", days: 1, w: 3},
+  {k: "crit", t: "حرج", c: "crit", days: 0, w: 4},
+];
+const riskOf = k => RISK.find(r => r.k === k) || {k: "none", t: "—", c: "neutral", days: 3, w: 0};
+const OBS_TYPES = [{k: "act", t: "تصرّف غير آمن"}, {k: "cond", t: "وضع غير آمن"}, {k: "good", t: "ملاحظة إيجابية"}];
+const typeLabel = k => (OBS_TYPES.find(t => t.k === k) || {t: ""}).t;
+const CATS = ["العمل على المرتفعات", "السقالات", "الرفع والرافعات", "الحفريات", "الكهرباء والعزل", "الأعمال الساخنة", "الأماكن المحصورة", "معدات الحماية الشخصية", "المعدات والمركبات", "التدبير المنزلي والنظافة", "تصاريح العمل", "المواد الكيميائية", "الحريق والطوارئ", "الإسعافات الأولية", "البيئة والنفايات", "أخرى"];
+const OBS_ST = {open: "مفتوحة", progress: "قيد المعالجة", closed: "مغلقة"};
+const INC_TYPES = [
+  {k: "nm", t: "حادث وشيك", en: "Near Miss", c: "warn"},
+  {k: "fac", t: "إسعافات أولية", en: "FAC", c: "warn"},
+  {k: "mtc", t: "علاج طبي", en: "MTC", c: "high", rec: true},
+  {k: "rwc", t: "عمل مقيّد", en: "RWC", c: "high", rec: true},
+  {k: "lti", t: "إصابة مضيعة للوقت", en: "LTI", c: "crit", rec: true, lti: true},
+  {k: "fat", t: "وفاة", en: "Fatality", c: "crit", rec: true, lti: true},
+  {k: "pd", t: "أضرار ممتلكات", en: "Property Damage", c: "high"},
+  {k: "fire", t: "حريق", en: "Fire", c: "crit"},
+  {k: "env", t: "انسكاب بيئي", en: "Environmental", c: "high"},
+  {k: "veh", t: "حادث مركبة", en: "Vehicle", c: "high"},
+];
+const incType = i => INC_TYPES.find(t => t.k === (i.type || i)) || INC_TYPES[0];
+const INC_ST = {reported: "مُبلّغ", investigating: "قيد التحقيق", closed: "مغلق"};
+const HIST = {create: "سُجّلت", note: "تحديث", progress: "بدأت المعالجة", close: "أُغلقت", reopen: "أُعيد فتحها", edit: "عُدّلت", investigate: "بدأ التحقيق"};
+const makeCode = p => { const d = new Date(); return `${p}-${String(d.getFullYear()).slice(2)}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`; };
+
+function defaultTeam() {
+  const t = [{id: "m-mgr", role: "manager", order: 1}, {id: "m-eng", role: "engineer", order: 2}];
+  for (let i = 1; i <= 7; i++) t.push({id: "m-off" + i, role: "officer", order: 2 + i, slot: i});
+  return t.map(m => ({name: "", site: "", phone: "", ...m}));
+}
+const normSettings = s => ({
+  orgName: s.orgName || "", project: s.project || "",
+  sites: Array.isArray(s.sites) ? s.sites.filter(Boolean) : [],
+  startDate: s.startDate || "", defaultHours: Number(s.defaultHours) || 10,
+});
+
+/* ---------- state ---------- */
+const VIEWS = [
+  {k: "home", t: "الرئيسية", i: "home"},
+  {k: "obs", t: "الملاحظات", i: "obs"},
+  {k: "inc", t: "الحوادث", i: "inc"},
+  {k: "daily", t: "التقارير اليومية", s: "التقارير", i: "daily"},
+  {k: "team", t: "الفريق", i: "team"},
+];
+const initialView = () => {
+  const h = (location.hash || "").replace("#", "");
+  if (VIEWS.some(v => v.k === h)) return h;
+  const s = lsGet("hse_view");
+  return VIEWS.some(v => v.k === s) ? s : "home";
+};
+const S = {
+  mode: "loading", readOnly: false, err: null, canDownload: true, user: null, online: true,
+  team: [], obsOpen: new Map(), obsRecent: new Map(), obs: new Map(), inc: [], daily: [],
+  settings: normSettings({}),
+  loaded: {team: false},
+  meId: null,
+  view: initialView(),
+  f: {st: "active", risk: "all", who: "all", q: ""},
+  incF: "all",
+  dayDate: today(),
+  sheet: null, pendingFn: null,
+};
+const photoCache = new Map();
+
+const byOrder = (a, b) => (a.order || 99) - (b.order || 99);
+const memberById = id => S.team.find(m => m.id === id);
+const memberName = m => m ? (m.name || (m.role === "officer" ? `مسؤول السلامة ${m.slot || ""}`.trim() : ROLES[m.role] || "عضو")) : "عضو غير معروف";
+const nameOf = id => id ? memberName(memberById(id)) : "—";
+const initialOf = m => { if (!m) return "؟"; const n = (m.name || "").trim(); if (n) return n[0]; return m.role === "manager" ? "م" : m.role === "engineer" ? "هـ" : String(m.slot || "س"); };
+const avCls = m => m && m.role === "manager" ? "mgr" : m && m.role === "engineer" ? "eng" : "";
+const avatar = (m, extra = "") => `<span class="av ${avCls(m)} ${extra}" aria-hidden="true">${esc(initialOf(m))}</span>`;
+const me = () => memberById(S.meId);
+const isLead = () => { const m = me(); return !!m && (m.role === "manager" || m.role === "engineer"); };
+const isManager = () => { const m = me(); return !!m && m.role === "manager"; };
+const canWrite = () => S.mode === "shared" && S.err !== "denied";
+const canManageTeam = () => canWrite() && (S.team.length === 0 || isLead());
+const isOverdue = o => o.status !== "closed" && !!o.due && o.due < today();
+const entriesOf = d => Object.entries((d && d.entries) || {}).filter(([, v]) => v && typeof v === "object").map(([k, v]) => ({mid: k, ...v}));
+const reporters = () => S.team.filter(m => m.role !== "manager");
+
+/* ---------- icons ---------- */
+const I = {
+  home: '<svg viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4.5-4.5"/><path d="M3 18h18"/></svg>',
+  obs: '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 11h6M9 15h4"/></svg>',
+  inc: '<svg viewBox="0 0 24 24"><path d="M12 3.5l9 16.5H3z"/><path d="M12 10v4M12 17v.4"/></svg>',
+  daily: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><path d="M9 15.5l2 2 4-4"/></svg>',
+  team: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2A6.5 6.5 0 0 1 21.5 20"/></svg>',
+  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+  dl: '<svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>',
+  cam: '<svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  edit: '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>',
+  prev: '<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>',
+  shield: '<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  trash: '<svg viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>',
+};
+const closeBtn = '<button type="button" class="icon-btn" data-close aria-label="إغلاق">' + I.x + '</button>';
+
+/* ---------- storage (Firebase) ---------- */
+const FBV = "12.19.0", FBURL = `https://www.gstatic.com/firebasejs/${FBV}/`;
+let Fa = null, Fu = null, Ff = null;
+const Store = {
+  fs: null, auth: null, unsubs: [],
+  ref(coll, id) { return Ff.doc(this.fs, coll, id); },
+  async commit(make) {
+    let p;
+    try { p = Promise.resolve(make()); } catch (e) { writeErr(e); return false; }
+    let settled = false, failed = false;
+    const done = p.then(() => { settled = true; }, e => { settled = true; failed = true; writeErr(e); });
+    await Promise.race([done, new Promise(r => setTimeout(r, 1500))]);
+    if (failed) return false;
+    if (!settled && !navigator.onLine) toast("حُفظ على الجهاز، وسيُرفع تلقائيًا عند عودة الاتصال.");
+    return true;
+  },
+  put(coll, id, data) { return this.commit(() => Ff.setDoc(this.ref(coll, id), data)); },
+  del(coll, id) { return this.commit(() => Ff.deleteDoc(this.ref(coll, id))); },
+  putDaily(date, mid, entry) { return this.commit(() => Ff.setDoc(this.ref("daily", date), {date, entries: {[mid]: entry}}, {merge: true})); },
+  delDaily(date, mid) { return this.commit(() => Ff.updateDoc(this.ref("daily", date), new Ff.FieldPath("entries", mid), Ff.deleteField())); },
+  putMany(items) { return this.commit(() => { const b = Ff.writeBatch(this.fs); items.forEach(([c, id, d]) => b.set(this.ref(c, id), d)); return b.commit(); }); },
+  async getPhoto(id) { const s = await Ff.getDoc(this.ref("photos", id)); return s.exists() ? (s.data().src || null) : null; },
+  putPhoto(id, src) { return this.put("photos", id, {src, at: Date.now()}); },
+};
+
+function writeErr(e) {
+  console.warn(e);
+  const c = e && e.code;
+  if (c === "permission-denied") toast("حسابك لا يملك صلاحية الكتابة. تأكد أن بريدك مضاف في قائمة الفريق.");
+  else if (c === "resource-exhausted") toast("تجاوز الاستخدام اليومي المجاني لقاعدة البيانات. حاول لاحقًا.");
+  else if (c === "invalid-argument") toast("تعذّر الحفظ: البيانات غير صالحة أو حجمها كبير جدًا.");
+  else toast("تعذّر الحفظ. تحقّق من الاتصال ثم أعد المحاولة.");
+}
+
+function resetData() {
+  S.team = []; S.obsOpen = new Map(); S.obsRecent = new Map(); S.obs = new Map();
+  S.inc = []; S.daily = []; S.settings = normSettings({}); S.loaded.team = false; S.meId = null;
+  photoCache.clear();
+}
+function syncMe() {
+  const em = S.user && S.user.email;
+  const m = em ? S.team.find(x => (x.email || "").toLowerCase() === em) : null;
+  S.meId = m ? m.id : null;
+}
+function syncAccess(list) {
+  const emails = [...new Set([...list.map(m => String(m.email || "").trim().toLowerCase()), S.user ? S.user.email : ""].filter(Boolean))];
+  return Store.put("config", "access", {emails, updatedAt: Date.now()});
+}
+
+function mergeObs() {
+  const m = new Map(S.obsRecent);
+  for (const [k, v] of S.obsOpen) m.set(k, v);
+  S.obs = m; render();
+}
+const docsToArr = s => s.docs.map(d => ({...d.data(), id: d.id}));
+const docsToMap = s => new Map(s.docs.map(d => [d.id, {...d.data(), id: d.id}]));
+
+function subscribeAll() {
+  const fs = Store.fs, Q = Ff;
+  const onErr = e => { console.warn(e); S.err = e && e.code === "permission-denied" ? "denied" : "sync"; render(); };
+  const sub = (q, fn) => Store.unsubs.push(Q.onSnapshot(q, fn, onErr));
+  sub(Q.collection(fs, "team"), s => { S.team = docsToArr(s).sort(byOrder); S.loaded.team = true; syncMe(); render(); });
+  sub(Q.doc(fs, "config", "settings"), s => { S.settings = normSettings(s.exists() ? s.data() : {}); render(); });
+  sub(Q.query(Q.collection(fs, "observations"), Q.where("status", "in", ["open", "progress"])), s => { S.obsOpen = docsToMap(s); mergeObs(); });
+  sub(Q.query(Q.collection(fs, "observations"), Q.orderBy("createdAt", "desc"), Q.limit(150)), s => { S.obsRecent = docsToMap(s); mergeObs(); });
+  sub(Q.query(Q.collection(fs, "incidents"), Q.orderBy("date", "desc"), Q.limit(150)), s => { S.inc = docsToArr(s); render(); });
+  sub(Q.query(Q.collection(fs, "daily"), Q.orderBy("date", "desc"), Q.limit(370)), s => { S.daily = docsToArr(s).map(d => ({...d, date: d.date || d.id})); render(); });
+}
+function stopSubs() { Store.unsubs.forEach(u => { try { u(); } catch {} }); Store.unsubs = []; }
+
+const cfgOk = c => !!(c && c.apiKey && c.projectId && !/ضع/.test(String(c.apiKey)));
+const authMsg = c => ({
+  "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "auth/wrong-password": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "auth/user-not-found": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "auth/invalid-email": "اكتب بريدًا إلكترونيًا صحيحًا.",
+  "auth/missing-password": "اكتب كلمة المرور.",
+  "auth/too-many-requests": "محاولات كثيرة. انتظر قليلًا ثم أعد المحاولة.",
+  "auth/network-request-failed": "لا يوجد اتصال بالإنترنت. تسجيل الدخول أول مرة يحتاج اتصالًا.",
+  "auth/user-disabled": "هذا الحساب موقوف. تواصل مع مدير السلامة.",
+}[c] || "تعذّر تسجيل الدخول. حاول مرة أخرى.");
+
+function drawGate() {
+  const g = $("#gate"), c = $("#gateCard");
+  const show = ["setup", "nolib", "auth"].includes(S.mode);
+  g.hidden = !show;
+  document.body.style.overflow = show ? "hidden" : (S.sheet ? "hidden" : "");
+  if (!show) return;
+  const head = `<div class="gate-mark" aria-hidden="true">${I.shield}</div><h1>منظومة السلامة الميدانية</h1>`;
+  if (S.mode === "setup") { c.innerHTML = head + `<p>لم تُضبط إعدادات قاعدة البيانات بعد. افتح الملف <b class="ltr">firebase-config.js</b> والصق فيه إعدادات مشروعك من Firebase كما في دليل التحويل، ثم أعد فتح التطبيق.</p>`; return; }
+  if (S.mode === "nolib") { c.innerHTML = head + `<p>تعذّر تحميل مكتبات الاتصال. تأكد من اتصالك بالإنترنت ثم أعد المحاولة.</p><button class="btn primary" type="button" data-act="reload">إعادة المحاولة</button>`; return; }
+  if (c.querySelector("#fLogin")) return;
+  c.innerHTML = head + `<p>سجّل الدخول بالبريد وكلمة المرور التي أنشأها لك مدير السلامة.</p>
+    <form id="fLogin" data-form="login" class="gate-form">
+      <div class="f"><label for="l_email">البريد الإلكتروني</label><input id="l_email" type="email" dir="ltr" autocomplete="username" inputmode="email" required></div>
+      <div class="f"><label for="l_pass">كلمة المرور</label><input id="l_pass" type="password" dir="ltr" autocomplete="current-password" required></div>
+      <p class="gate-err" id="loginErr" role="alert" hidden></p>
+      <button class="btn primary" type="submit">دخول</button>
+      <button class="link" type="button" data-act="resetPass">نسيت كلمة المرور؟</button>
+    </form>`;
+}
+
+async function doLogin(form) {
+  const email = $("#l_email").value.trim(), pass = $("#l_pass").value;
+  const err = $("#loginErr"), btn = form.querySelector('[type="submit"]');
+  err.hidden = true; btn.disabled = true; btn.textContent = "جارٍ الدخول…";
+  try { await Fu.signInWithEmailAndPassword(Store.auth, email, pass); }
+  catch (e) { err.textContent = authMsg(e && e.code); err.hidden = false; }
+  finally { if (btn.isConnected) { btn.disabled = false; btn.textContent = "دخول"; } }
+}
+
+async function boot() {
+  S.online = navigator.onLine;
+  addEventListener("online", () => { S.online = true; render(); });
+  addEventListener("offline", () => { S.online = false; render(); });
+  draw();
+  if (!cfgOk(window.FIREBASE_CONFIG)) { S.mode = "setup"; drawGate(); draw(); return; }
+  try {
+    [Fa, Fu, Ff] = await Promise.all([import(FBURL + "firebase-app.js"), import(FBURL + "firebase-auth.js"), import(FBURL + "firebase-firestore.js")]);
+  } catch (e) { console.warn(e); S.mode = "nolib"; drawGate(); draw(); return; }
+  const app = Fa.initializeApp(window.FIREBASE_CONFIG);
+  Store.auth = Fu.getAuth(app);
+  try {
+    Store.fs = Ff.initializeFirestore(app, {localCache: Ff.persistentLocalCache({tabManager: Ff.persistentMultipleTabManager()}), ignoreUndefinedProperties: true});
+  } catch (e) { console.warn(e); Store.fs = Ff.getFirestore(app); }
+  Fu.onAuthStateChanged(Store.auth, u => {
+    stopSubs(); resetData();
+    S.user = u ? {uid: u.uid, email: String(u.email || "").toLowerCase()} : null;
+    S.err = null;
+    if (u) { S.mode = "shared"; subscribeAll(); } else { S.mode = "auth"; if (S.sheet) closeSheet(); }
+    drawGate(); render();
+  });
+}
+
+/* ---------- rendering ---------- */
+let queued = false;
+function render() { if (queued) return; queued = true; queueMicrotask(() => { queued = false; draw(); }); }
+
+function withPreserved(box, fn, keepValues = true) {
+  const vals = {};
+  if (keepValues) box.querySelectorAll("input[id],textarea[id],select[id]").forEach(x => {
+    if (x.type === "file") return;
+    vals[x.id] = (x.type === "checkbox" || x.type === "radio") ? x.checked : x.value;
+  });
+  const act = document.activeElement;
+  const aid = act && box.contains(act) && act.id ? act.id : null;
+  let ss = null, se = null; try { ss = act.selectionStart; se = act.selectionEnd; } catch {}
+  fn();
+  for (const [id, v] of Object.entries(vals)) {
+    const x = box.querySelector("#" + CSS.escape(id)); if (!x) continue;
+    if (x.type === "checkbox" || x.type === "radio") x.checked = v; else x.value = v;
+  }
+  if (aid) { const x = box.querySelector("#" + CSS.escape(aid)); if (x) { x.focus({preventScroll: true}); try { if (ss !== null) x.setSelectionRange(ss, se); } catch {} } }
+}
+
+function draw() {
+  drawChrome();
+  const v = $("#view");
+  withPreserved(v, () => { v.innerHTML = (VIEW_FN[S.view] || vHome)(); }, false);
+  if (S.sheet && SHEETS[S.sheet.kind] && SHEETS[S.sheet.kind].live) drawSheet();
+}
+
+function drawChrome() {
+  const st = S.settings;
+  $("#brandSub").textContent = [st.orgName, st.project].filter(Boolean).join(" · ") || "إدارة الصحة والسلامة والبيئة";
+  const sy = $("#sync");
+  const map = {
+    loading: ["", "جارٍ الاتصال"], setup: ["err", "غير مُعدّ"], nolib: ["err", "غير متصل"], auth: ["", "سجّل الدخول"],
+    shared: S.online ? ["shared", "متصل"] : ["local", "بدون اتصال · يُحفظ على الجهاز"],
+  };
+  let [cls, lb] = map[S.mode] || ["", ""];
+  if (S.err) { cls = "err"; lb = "انقطعت المزامنة"; }
+  sy.className = "sync " + cls; sy.querySelector(".lb").textContent = lb; sy.title = lb;
+  const chip = $("#meChip"), m = me();
+  if (m) { chip.classList.remove("ask"); chip.innerHTML = `${avatar(m)}<span style="min-width:0"><span class="nm" style="display:block">${esc(memberName(m))}</span><span class="rl">${esc(ROLES[m.role])}</span></span>`; chip.setAttribute("aria-label", "المستخدم الحالي: " + memberName(m) + ". اضغط للتغيير"); }
+  else { chip.classList.add("ask"); chip.innerHTML = `<span class="av">؟</span><span class="nm">اختر اسمك</span>`; chip.setAttribute("aria-label", "اختر اسمك من قائمة الفريق"); }
+  const openObs = [...S.obs.values()].filter(o => o.status !== "closed");
+  const hot = openObs.filter(isOverdue).length;
+  const openInc = S.inc.filter(i => i.status !== "closed").length;
+  const cnt = {obs: openObs.length, inc: openInc};
+  $("#sideNav").innerHTML = VIEWS.map(v => `<button type="button" data-nav="${v.k}" ${S.view === v.k ? 'aria-current="page"' : ""}>${I[v.i]}<span>${v.t}</span>${cnt[v.k] ? `<span class="cnt ${v.k === "obs" && hot ? "hot" : ""}">${cnt[v.k]}</span>` : ""}</button>`).join("");
+  $("#tabNav").innerHTML = VIEWS.map(v => `<button type="button" data-nav="${v.k}" ${S.view === v.k ? 'aria-current="page"' : ""}>${I[v.i]}<span>${v.s || v.t}</span>${v.k === "obs" && hot ? `<span class="dot">${hot}</span>` : ""}</button>`).join("");
+  $("#sideFoot").innerHTML = `${S.team.length} أعضاء في الفريق<br>${S.mode === "shared" ? (S.online ? "التحديثات تظهر لجميع الأعضاء فورًا" : "بدون اتصال: تُحفظ السجلات وتُرفع لاحقًا") : ""}`;
+}
+
+function banners() {
+  const out = [];
+  if (S.mode === "loading") out.push(`<div class="banner info">جارٍ الاتصال بقاعدة البيانات…</div>`);
+  if (S.err === "denied") out.push(`<div class="banner err"><span>حسابك (<span class="ltr">${esc(S.user ? S.user.email : "")}</span>) غير مضاف إلى قائمة الفريق. اطلب من مدير السلامة إضافة بريدك في صفحة الفريق، ثم أعد فتح التطبيق.</span><button class="btn sm" data-act="logout" type="button">تسجيل الخروج</button></div>`);
+  else if (S.err) out.push(`<div class="banner err"><span>انقطعت المزامنة مع قاعدة البيانات.</span><button class="btn sm" data-act="reload" type="button">إعادة التحميل</button></div>`);
+  if (S.mode === "shared" && !S.online) out.push(`<div class="banner warn">لا يوجد اتصال بالإنترنت. تابع التسجيل كالمعتاد، وستُرفع البيانات تلقائيًا عند عودة الاتصال.</div>`);
+  if (S.mode === "shared" && !S.err && S.loaded.team && S.team.length && !me()) out.push(`<div class="banner info"><span>اربط حسابك باسمك في قائمة الفريق لتُنسب إليك السجلات التي تضيفها.</span><button class="btn sm primary" data-act="who" type="button">اختيار اسمي</button></div>`);
+  if (S.mode === "shared" && !S.err && S.loaded.team && !S.team.length) out.push(`<div class="banner info"><span>قائمة الفريق فارغة. أنشئها أولًا ثم اربط حسابك باسمك.</span><button class="btn sm primary" data-act="createTeam" type="button">إنشاء قائمة الفريق</button></div>`);
+  return out.join("");
+}
+
+const riskPill = k => { const r = riskOf(k); return r.k === "none" ? "" : `<span class="pill p-${r.c}">${r.t}</span>`; };
+const obsStPill = s => `<span class="pill ${s === "closed" ? "p-ok" : s === "progress" ? "p-accent" : "p-neutral"}">${OBS_ST[s] || ""}</span>`;
+const incStPill = s => `<span class="pill ${s === "closed" ? "p-ok" : s === "investigating" ? "p-accent" : "p-neutral"}">${INC_ST[s] || ""}</span>`;
+const incTypePill = i => { const t = incType(i); return `<span class="pill p-${t.c}">${t.t}</span>`; };
+
+/* ---------- home ---------- */
+function vHome() {
+  const t = today(), yr = t.slice(0, 4), mo = t.slice(0, 7);
+  const all = [...S.obs.values()];
+  const open = all.filter(o => o.status !== "closed");
+  const overdue = open.filter(isOverdue);
+  const w0 = addDays(t, -6);
+  const obsWeek = all.filter(o => (o.date || "") >= w0 && (o.date || "") <= t).length;
+  const goodWeek = all.filter(o => o.type === "good" && (o.date || "") >= w0).length;
+  const dstat = d => entriesOf(d).reduce((a, e) => { a.mh += Number(e.manhours) || 0; a.mp += Number(e.manpower) || 0; return a; }, {mh: 0, mp: 0});
+  let mhMonth = 0, mhYear = 0;
+  for (const d of S.daily) { const {mh} = dstat(d); if (d.date.startsWith(yr)) mhYear += mh; if (d.date.startsWith(mo)) mhMonth += mh; }
+  const incY = S.inc.filter(i => (i.date || "").startsWith(yr));
+  const recN = incY.filter(i => incType(i).rec).length;
+  const ltiN = incY.filter(i => incType(i).lti).length;
+  const trir = mhYear ? recN * 200000 / mhYear : null;
+  const ltir = mhYear ? ltiN * 200000 / mhYear : null;
+  const nmMo = S.inc.filter(i => i.type === "nm" && (i.date || "").startsWith(mo)).length;
+  const lastLti = S.inc.filter(i => incType(i).lti).map(i => i.date).filter(Boolean).sort().pop();
+  const base = lastLti || S.settings.startDate;
+  const days = base ? Math.max(0, daysBetween(base, t)) : null;
+  let safeMh = 0;
+  if (base) for (const d of S.daily) if (lastLti ? d.date > base : d.date >= base) safeMh += dstat(d).mh;
+
+  const reps = reporters();
+  const tDoc = S.daily.find(d => d.date === t);
+  const tEnt = entriesOf(tDoc);
+  const doneIds = new Set(tEnt.map(e => e.mid));
+  const subN = reps.filter(m => doneIds.has(m.id)).length;
+  const tSum = tEnt.reduce((a, e) => { a.mp += +e.manpower || 0; a.mh += +e.manhours || 0; a.tbt += +e.tbtCount || 0; a.pm += +e.permits || 0; return a; }, {mp: 0, mh: 0, tbt: 0, pm: 0});
+
+  const rc = {}; RISK.forEach(r => rc[r.k] = open.filter(o => o.risk === r.k).length);
+  const openRisked = RISK.reduce((a, r) => a + rc[r.k], 0);
+  const c0 = addDays(t, -29);
+  const catC = {};
+  all.filter(o => o.type !== "good" && (o.date || "") >= c0).forEach(o => { catC[o.category] = (catC[o.category] || 0) + 1; });
+  const cats = Object.entries(catC).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const catMax = cats.length ? cats[0][1] : 1;
+
+  const att = open.slice().sort((a, b) => (isOverdue(b) - isOverdue(a)) || (riskOf(b.risk).w - riskOf(a.risk).w) || (a.due || "").localeCompare(b.due || "")).slice(0, 6);
+
+  const perf = S.team.map(m => ({
+    m,
+    obs: all.filter(o => o.reportedBy === m.id && (o.date || "").startsWith(mo)).length,
+    closed: all.filter(o => o.closedBy === m.id && o.type !== "good" && (o.closedAt || "").startsWith(mo)).length,
+    reps: S.daily.filter(d => d.date.startsWith(mo) && d.entries && d.entries[m.id]).length,
+  }));
+
+  const kpi = (label, val, sub, extra = "", act = "") => act
+    ? `<button type="button" class="kpi ${extra}" data-act="${act}"><span class="k-l">${label}</span><span class="k-v">${val}</span><span class="k-s">${sub}</span></button>`
+    : `<div class="kpi ${extra}"><span class="k-l">${label}</span><span class="k-v">${val}</span><span class="k-s">${sub}</span></div>`;
+
+  return `${banners()}
+  <div class="ph"><div><h1>لوحة السلامة</h1><p>${esc(fmtDL(t))}</p></div>
+    <div class="actions">
+      <button class="btn" type="button" data-act="copySummary">${I.copy}<span>مشاركة ملخص اليوم</span></button>
+      ${canWrite() ? `<button class="btn primary" type="button" data-act="newObs">${I.plus}<span>تسجيل ملاحظة</span></button>` : ""}
+    </div></div>
+  <div class="stack">
+    <div class="g-hero">
+      <section class="board" aria-label="عدّاد السلامة">
+        <div class="board-label">أيام عمل بدون إصابة مضيعة للوقت <span class="abbr">LTI</span></div>
+        <div class="board-num">${days === null ? "—" : fmtN(days)}${days !== null ? `<small>${days === 2 ? "يومان" : days >= 3 && days <= 10 ? "أيام" : days > 10 ? "يومًا" : "يوم"}</small>` : ""}</div>
+        <div class="board-row">
+          <div>ساعات عمل آمنة<b>${fmtN(safeMh)}</b></div>
+          <div>${lastLti ? "تاريخ آخر إصابة" : "بداية العدّ"}<b>${base ? esc(fmtD(base)) : "غير محدد"}</b></div>
+          <div>حالات مسجلة هذا العام<b>${recN}</b></div>
+        </div>
+        ${!base ? `<p class="board-note">حدّد تاريخ بداية المشروع من صفحة الفريق ليبدأ العدّ.</p>` : ""}
+      </section>
+      <section class="panel">
+        <h2>تقارير اليوم <span class="pill ${reps.length && subN === reps.length ? "p-ok" : "p-neutral"}">${subN} من ${reps.length}</span>
+          <span class="more"><button class="link" type="button" data-nav="daily">فتح التقارير</button></span></h2>
+        ${reps.length ? `<div class="chips">${reps.map(m => { const d = doneIds.has(m.id); return `<span class="chip ${d ? "done" : ""}">${avatar(m)}<span>${esc(memberName(m))}</span><span class="st">${d ? "أُرسل" : "لم يُرسل"}</span></span>`; }).join("")}</div>`
+          : `<p class="muted" style="margin:0">أضف أعضاء الفريق من صفحة الفريق لمتابعة التقارير اليومية.</p>`}
+        <div class="today-strip">
+          <div>القوى العاملة<b>${fmtN(tSum.mp)}</b></div>
+          <div>ساعات العمل<b>${fmtN(tSum.mh)}</b></div>
+          <div>حضور التوعية<b>${fmtN(tSum.tbt)}</b></div>
+          <div>تصاريح العمل<b>${fmtN(tSum.pm)}</b></div>
+        </div>
+      </section>
+    </div>
+    <div class="g-kpi">
+      ${kpi("ساعات العمل هذا الشهر", fmtN(mhMonth), `منذ بداية العام: ${fmtN(mhYear)}`)}
+      ${kpi(`معدل الحالات المسجلة <span class="abbr">TRIR</span>`, trir === null ? "—" : trir.toFixed(2), `<span class="abbr">LTIR</span> ${ltir === null ? "—" : ltir.toFixed(2)} · لكل 200,000 ساعة`)}
+      ${kpi("ملاحظات مفتوحة", open.length, overdue.length ? `<span class="overdue">${overdue.length} متأخرة عن الاستحقاق</span>` : "لا توجد ملاحظات متأخرة", overdue.length ? "alert" : "", "goObs")}
+      ${kpi("ملاحظات آخر 7 أيام", obsWeek, `إيجابية ${goodWeek} · حوادث وشيكة هذا الشهر ${nmMo}`)}
+    </div>
+    <div class="g-2">
+      <section class="panel">
+        <h2>الملاحظات المفتوحة حسب الخطورة</h2>
+        ${openRisked ? `<div class="seg" role="img" aria-label="توزيع الملاحظات المفتوحة حسب الخطورة">${RISK.slice().reverse().map(r => rc[r.k] ? `<span class="bg-${r.c}" style="flex:${rc[r.k]} 0 0"></span>` : "").join("")}</div>`
+          : `<div class="seg"></div>`}
+        <div class="legend">${RISK.slice().reverse().map(r => `<div><b><i class="bg-${r.c}"></i>${rc[r.k]}</b>${r.t}</div>`).join("")}</div>
+      </section>
+      <section class="panel">
+        <h2>أكثر الفئات تكرارًا <span class="tag">آخر 30 يومًا</span></h2>
+        ${cats.length ? `<div class="bars">${cats.map(([c, n]) => `<div class="bar-row"><span class="lb" title="${esc(c)}">${esc(c)}</span><div class="track"><div class="fill" style="width:${(n / catMax * 100).toFixed(1)}%"></div></div><span class="v">${n}</span></div>`).join("")}</div>`
+          : `<p class="muted" style="margin:0">ستظهر هنا فئات الملاحظات الأكثر تكرارًا بعد تسجيل أول ملاحظة.</p>`}
+      </section>
+    </div>
+    <div class="g-2">
+      <section class="panel">
+        <h2>تحتاج متابعة <span class="more"><button class="link" type="button" data-act="goObs">كل الملاحظات المفتوحة</button></span></h2>
+        ${att.length ? `<div class="att">${att.map(o => { const r = riskOf(o.risk), od = isOverdue(o); return `<div class="att-item" role="button" tabindex="0" data-open-obs="${esc(o.id)}"><span class="att-dot bg-${r.c === "neutral" ? "accent" : r.c}"></span><div class="att-body"><div class="att-t">${esc(o.category)} · ${esc(o.location)}</div><div class="att-m">${od ? `<span class="overdue">متأخرة ${daysTxt(daysBetween(o.due, t))}</span> · ` : o.due ? `الاستحقاق ${esc(fmtD(o.due))} · ` : ""}${esc(o.responsible || nameOf(o.reportedBy))}</div></div>${riskPill(o.risk)}</div>`; }).join("")}</div>`
+          : `<p class="muted" style="margin:0">لا توجد ملاحظات مفتوحة. كل الإجراءات التصحيحية مغلقة.</p>`}
+      </section>
+      <section class="panel">
+        <h2>نشاط الفريق هذا الشهر</h2>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>العضو</th><th>ملاحظات</th><th>أغلقها</th><th>تقارير يومية</th></tr></thead>
+          <tbody>${perf.map(p => `<tr><td class="nm">${esc(memberName(p.m))}<span class="sub">${esc(ROLES[p.m.role])}</span></td><td class="${p.obs ? "" : "zero"}">${p.obs}</td><td class="${p.closed ? "" : "zero"}">${p.closed}</td><td class="${p.reps ? "" : "zero"}">${p.m.role === "manager" ? "—" : p.reps}</td></tr>`).join("") || `<tr><td colspan="4" class="muted">لا يوجد أعضاء بعد.</td></tr>`}</tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>`;
+}
+
+/* ---------- observations ---------- */
+function obsItem(o) {
+  const t = today(), r = riskOf(o.risk), od = isOverdue(o), good = o.type === "good";
+  return `<article class="rec" role="button" tabindex="0" data-open-obs="${esc(o.id)}">
+    <span class="sev ${good ? "good" : r.c}"></span>
+    <div class="rec-main">
+      <div class="rec-top"><span class="code">${esc(o.code)}</span>${good ? `<span class="pill p-accent">ملاحظة إيجابية</span>` : riskPill(o.risk) + obsStPill(o.status)}${good ? "" : `<span class="tag">${esc(typeLabel(o.type))}</span>`}</div>
+      <div class="rec-title">${esc(o.category)}${o.location ? ` <span class="muted">· ${esc(o.location)}</span>` : ""}</div>
+      <p class="rec-desc">${esc(o.desc)}</p>
+      <div class="rec-meta">
+        <span>${esc(nameOf(o.reportedBy))}</span><span>${esc(fmtD(o.date))}</span>
+        ${o.responsible ? `<span>المسؤول: ${esc(o.responsible)}</span>` : ""}
+        ${o.status !== "closed" && o.due ? `<span class="${od ? "overdue" : ""}">الاستحقاق ${esc(fmtD(o.due))}${od ? ` · متأخرة ${daysTxt(daysBetween(o.due, t))}` : ""}</span>` : ""}
+        ${o.status === "closed" && !good ? `<span>أُغلقت ${esc(fmtD(o.closedAt))}</span>` : ""}
+        ${o.hasPhoto ? `<span class="ico">${I.cam}صورة</span>` : ""}
+      </div>
+    </div>
+  </article>`;
+}
+
+function vObs() {
+  const f = S.f;
+  const all = [...S.obs.values()];
+  const cnt = {active: all.filter(o => o.status !== "closed").length, closed: all.filter(o => o.status === "closed").length, all: all.length};
+  let list = all;
+  if (f.st === "active") list = list.filter(o => o.status !== "closed");
+  else if (f.st === "closed") list = list.filter(o => o.status === "closed");
+  if (f.risk !== "all") list = list.filter(o => f.risk === "good" ? o.type === "good" : o.risk === f.risk);
+  if (f.who !== "all") list = list.filter(o => o.reportedBy === f.who);
+  const q = f.q.trim().toLowerCase();
+  if (q) list = list.filter(o => [o.code, o.desc, o.location, o.category, o.responsible, o.action, o.immediate].join(" ").toLowerCase().includes(q));
+  if (f.st === "active") list.sort((a, b) => (isOverdue(b) - isOverdue(a)) || (riskOf(b.risk).w - riskOf(a.risk).w) || (b.createdAt || 0) - (a.createdAt || 0));
+  else if (f.st === "closed") list.sort((a, b) => (b.closedAt || "").localeCompare(a.closedAt || "") || (b.createdAt || 0) - (a.createdAt || 0));
+  else list.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || 0) - (a.createdAt || 0));
+  const filtered = f.risk !== "all" || f.who !== "all" || q;
+
+  return `${banners()}
+  <div class="ph"><div><h1>ملاحظات السلامة</h1><p>التصرفات والأوضاع غير الآمنة، والإجراءات التصحيحية حتى الإغلاق</p></div>
+    <div class="actions">
+      ${S.canDownload ? `<button class="btn" type="button" data-act="exportObs">${I.dl}<span>تصدير CSV</span></button>` : ""}
+      ${canWrite() ? `<button class="btn primary" type="button" data-act="newObs">${I.plus}<span>تسجيل ملاحظة</span></button>` : ""}
+    </div></div>
+  <div class="filters">
+    <div class="segctl" role="group" aria-label="الحالة">
+      ${[["active", "النشطة"], ["closed", "المغلقة"], ["all", "الكل"]].map(([k, t]) => `<button type="button" data-f="st:${k}" aria-pressed="${f.st === k}">${t}<span class="c">${cnt[k]}</span></button>`).join("")}
+    </div>
+    <select id="f_risk" aria-label="الخطورة">
+      <option value="all">كل درجات الخطورة</option>
+      ${RISK.slice().reverse().map(r => `<option value="${r.k}" ${f.risk === r.k ? "selected" : ""}>${r.t}</option>`).join("")}
+      <option value="good" ${f.risk === "good" ? "selected" : ""}>الإيجابية فقط</option>
+    </select>
+    <select id="f_who" aria-label="المُبلّغ">
+      <option value="all">كل أعضاء الفريق</option>
+      ${S.team.map(m => `<option value="${esc(m.id)}" ${f.who === m.id ? "selected" : ""}>${esc(memberName(m))}</option>`).join("")}
+    </select>
+    <input class="search" id="f_q" type="search" placeholder="بحث بالرقم أو الموقع أو الوصف" value="${esc(f.q)}" aria-label="بحث">
+  </div>
+  ${list.length ? `<div class="list">${list.map(obsItem).join("")}</div>`
+    : filtered ? `<div class="empty"><strong>لا توجد ملاحظات مطابقة</strong>جرّب تغيير عوامل التصفية أو كلمة البحث.</div>`
+    : f.st === "active" && cnt.all ? `<div class="empty"><strong>لا توجد ملاحظات مفتوحة</strong>كل الإجراءات التصحيحية مغلقة. أحسنتم.</div>`
+    : `<div class="empty"><strong>لم تُسجَّل أي ملاحظة بعد</strong>سجّل التصرفات والأوضاع غير الآمنة التي يرصدها الفريق، مع الإجراء التصحيحي والجهة المسؤولة وتاريخ الاستحقاق.${canWrite() ? `<br><button class="btn primary" type="button" data-act="newObs">${I.plus}<span>تسجيل أول ملاحظة</span></button>` : ""}</div>`}`;
+}
+
+function sObsForm() {
+  const o = S.sheet.id ? S.obs.get(S.sheet.id) : null;
+  const t = today();
+  const v = o || {date: t, time: nowHM(), location: "", category: "", type: "cond", risk: "med", desc: "", immediate: "", action: "", responsible: "", due: addDays(t, 3)};
+  const sites = S.settings.sites;
+  return `<form id="fObs" data-form="obs" autocomplete="off">
+  <div class="sheet-head"><div><h2>${o ? "تعديل الملاحظة" : "تسجيل ملاحظة سلامة"}</h2><p>${o ? `<span class="code">${esc(o.code)}</span>` : "المُبلّغ: " + esc(nameOf(S.meId))}</p></div>${closeBtn}</div>
+  <div class="sheet-body"><div class="fgrid">
+    <div class="f"><label for="o_date" class="req">التاريخ</label><input type="date" id="o_date" name="date" value="${esc(v.date)}" max="${t}" required></div>
+    <div class="f"><label for="o_time">الوقت</label><input type="time" id="o_time" name="time" value="${esc(v.time || "")}"></div>
+    <div class="f full"><label for="o_loc" class="req">الموقع / المنطقة</label><input id="o_loc" name="location" list="siteList" value="${esc(v.location)}" required placeholder="مثال: المحطة الفرعية · البوابة الشمالية"><datalist id="siteList">${sites.map(s => `<option value="${esc(s)}"></option>`).join("")}</datalist></div>
+    <fieldset class="f full"><legend class="lbl">نوع الملاحظة</legend><div class="choice">${OBS_TYPES.map(x => `<label><input type="radio" name="type" id="o_type_${x.k}" value="${x.k}" ${v.type === x.k ? "checked" : ""}><span>${x.t}</span></label>`).join("")}</div></fieldset>
+    <div class="f full"><label for="o_cat" class="req">الفئة</label><select id="o_cat" name="category" required><option value="">اختر الفئة</option>${CATS.map(c => `<option ${v.category === c ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></div>
+    <div class="f full"><label for="o_desc" class="req">وصف الملاحظة</label><textarea id="o_desc" name="desc" rows="3" required placeholder="ماذا شاهدت؟ وأين؟ ومن المعني؟">${esc(v.desc)}</textarea></div>
+    <div class="f full"><label for="o_imm">الإجراء الفوري المتخذ</label><textarea id="o_imm" name="immediate" rows="2" placeholder="مثال: إيقاف العمل وتوجيه العامل لاستخدام حزام الأمان الكامل">${esc(v.immediate)}</textarea></div>
+    <div class="full fgrid" id="actionBlock" ${v.type === "good" ? "hidden" : ""}>
+      <fieldset class="f full"><legend class="lbl">درجة الخطورة</legend><div class="choice">${RISK.map(r => `<label><input type="radio" name="risk" id="o_risk_${r.k}" value="${r.k}" ${v.risk === r.k ? "checked" : ""}><span class="r-${r.c}">${r.t}</span></label>`).join("")}</div><span class="hint">يُقترح تاريخ الاستحقاق حسب الخطورة: الحرجة في نفس اليوم، العالية خلال يوم، المتوسطة خلال 3 أيام، المنخفضة خلال أسبوع.</span></fieldset>
+      <div class="f full"><label for="o_act">الإجراء التصحيحي المطلوب</label><textarea id="o_act" name="action" rows="2" placeholder="مثال: تركيب حواجز حماية على حافة الحفرية وتعليق لافتات تحذيرية">${esc(v.action)}</textarea></div>
+      <div class="f"><label for="o_resp">الجهة أو الشخص المسؤول</label><input id="o_resp" name="responsible" value="${esc(v.responsible)}" placeholder="مثال: مقاول السقالات"></div>
+      <div class="f"><label for="o_due">تاريخ الاستحقاق</label><input type="date" id="o_due" name="due" value="${esc(v.due)}" ${o ? 'data-touched="1"' : ""}></div>
+    </div>
+    <div class="f full"><label for="o_photo">صورة ${o && o.hasPhoto ? "(تستبدل الصورة الحالية)" : "(اختياري)"}</label><input type="file" id="o_photo" accept="image/*"><span class="hint">تُضغط الصورة تلقائيًا قبل الحفظ.</span></div>
+  </div></div>
+  <div class="sheet-foot"><button type="submit" class="btn primary">${o ? "حفظ التعديلات" : "حفظ الملاحظة"}</button><button type="button" class="btn" data-close>إلغاء</button></div>
+  </form>`;
+}
+
+async function compressImage(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    let max = 1200, q = 0.72, out = "";
+    for (let k = 0; k < 6; k++) {
+      const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(img.naturalWidth * s)); c.height = Math.max(1, Math.round(img.naturalHeight * s));
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      out = c.toDataURL("image/jpeg", q);
+      if (out.length < 230000) return out;
+      max = Math.round(max * 0.8); q = Math.max(0.45, q - 0.07);
+    }
+    return out.length < 250000 ? out : null;
+  } finally { URL.revokeObjectURL(url); }
+}
+
+async function submitObs(form, fd) {
+  const g = k => String(fd.get(k) || "").trim();
+  const type = g("type") || "cond", good = type === "good";
+  const now = Date.now();
+  const existing = S.sheet.id ? S.obs.get(S.sheet.id) : null;
+  const id = existing ? existing.id : rid();
+  const o = existing ? clone(existing) : {id, code: makeCode("OBS"), createdAt: now, status: good ? "closed" : "open", reportedBy: S.meId, history: [{at: now, by: S.meId, kind: "create"}]};
+  Object.assign(o, {
+    date: g("date"), time: g("time"), location: g("location"), category: g("category"), type,
+    risk: good ? "none" : (g("risk") || "med"), desc: g("desc"), immediate: g("immediate"),
+    action: good ? "" : g("action"), responsible: good ? "" : g("responsible"), due: good ? "" : g("due"), updatedAt: now,
+  });
+  if (good && o.status !== "closed") { o.status = "closed"; }
+  if (good && !o.closedAt) { o.closedAt = o.date; o.closedBy = S.meId; }
+  if (existing) o.history = [...(o.history || []), {at: now, by: S.meId, kind: "edit"}];
+  const file = form.querySelector("#o_photo") && form.querySelector("#o_photo").files[0];
+  let photo = null;
+  if (file) {
+    try { photo = await compressImage(file); } catch { photo = null; }
+    if (!photo) toast("تعذّرت معالجة الصورة. حُفظت الملاحظة بدون صورة.");
+  }
+  if (photo) o.hasPhoto = true;
+  if (!await Store.put("observations", id, o)) return;
+  if (photo) { photoCache.set(id, photo); await Store.putPhoto(id, photo); }
+  closeSheet();
+  toast(existing ? "حُفظت التعديلات" : `سُجّلت الملاحظة ${o.code}`);
+}
+
+function histList(h) {
+  if (!h || !h.length) return "";
+  return `<div class="block"><h3>سجل الإجراءات</h3><ol class="tl">${h.slice().reverse().map(x => `<li class="k-${esc(x.kind)}"><span class="t">${esc(HIST[x.kind] || x.kind)} · ${esc(nameOf(x.by))} · ${esc(fmtTs(x.at))}</span>${x.text ? `<p>${esc(x.text)}</p>` : ""}</li>`).join("")}</ol></div>`;
+}
+
+function sObsDetail() {
+  const o = S.obs.get(S.sheet.id);
+  if (!o) return `<div class="sheet-head"><div><h2>الملاحظة غير متاحة</h2><p>ربما حُذفت من قِبل عضو آخر.</p></div>${closeBtn}</div><div class="sheet-foot"><button class="btn" type="button" data-close>إغلاق</button></div>`;
+  const t = today(), good = o.type === "good", od = isOverdue(o), sh = S.sheet;
+  const mine = o.reportedBy === S.meId;
+  const w = canWrite();
+  const photo = o.hasPhoto ? `<div class="block"><h3>الصورة</h3><div class="photo" id="photoBox">${photoCache.get(o.id) && photoCache.get(o.id) !== "none" ? `<img src="${photoCache.get(o.id)}" alt="صورة الملاحظة ${esc(o.code)}">` : photoCache.get(o.id) === "none" ? "تعذّر تحميل الصورة" : "جارٍ تحميل الصورة…"}</div></div>` : "";
+  let foot = "";
+  if (sh.confirm) {
+    foot = `<div class="confirm-box"><p>حذف الملاحظة ${esc(o.code)} نهائيًا من سجل الفريق؟ لا يمكن التراجع.</p><button class="btn danger-solid sm" type="button" data-act="delObs" data-id="${esc(o.id)}">تأكيد الحذف</button><button class="btn sm" type="button" data-act="cancelDel">إلغاء</button></div>`;
+  } else if (sh.closing) {
+    foot = `<button class="btn primary" type="button" data-act="obsCloseConfirm" data-id="${esc(o.id)}">تأكيد الإغلاق</button><button class="btn" type="button" data-act="obsCloseCancel">رجوع</button>`;
+  } else if (w) {
+    const b = [];
+    if (!good && o.status === "open") b.push(`<button class="btn" type="button" data-act="obsProgress" data-id="${esc(o.id)}">بدء المعالجة</button>`);
+    if (!good && o.status !== "closed") b.push(`<button class="btn primary" type="button" data-act="obsCloseMode">إغلاق الملاحظة</button>`);
+    if (!good && o.status === "closed" && isLead()) b.push(`<button class="btn" type="button" data-act="obsReopen" data-id="${esc(o.id)}">إعادة فتح</button>`);
+    const e = [];
+    if (mine || isLead()) e.push(`<button class="btn ghost sm" type="button" data-act="editObs" data-id="${esc(o.id)}">${I.edit}<span>تعديل</span></button>`);
+    if (isLead()) e.push(`<button class="btn ghost sm danger" type="button" data-act="askDel">${I.trash}<span>حذف</span></button>`);
+    foot = b.join("") + `<div class="end">${e.join("")}</div>`;
+  } else {
+    foot = `<button class="btn" type="button" data-close>إغلاق</button>`;
+  }
+  return `<div class="sheet-head"><div>
+      <div class="rec-top"><span class="code">${esc(o.code)}</span>${good ? `<span class="pill p-accent">ملاحظة إيجابية</span>` : riskPill(o.risk) + obsStPill(o.status)}${od ? `<span class="pill p-crit">متأخرة ${daysTxt(daysBetween(o.due, t))}</span>` : ""}</div>
+      <h2>${esc(o.category)}</h2><p>${esc(o.location)}</p></div>${closeBtn}</div>
+    <div class="sheet-body">
+      <dl class="dl">
+        <div><dt>التاريخ والوقت</dt><dd>${esc(fmtDM(o.date))}${o.time ? ` · <span class="ltr">${esc(o.time)}</span>` : ""}</dd></div>
+        <div><dt>النوع</dt><dd>${esc(typeLabel(o.type))}</dd></div>
+        <div><dt>المُبلّغ</dt><dd>${esc(nameOf(o.reportedBy))}</dd></div>
+        ${good ? "" : `<div><dt>الجهة المسؤولة</dt><dd>${esc(o.responsible || "—")}</dd></div>
+        <div><dt>تاريخ الاستحقاق</dt><dd class="${od ? "overdue" : ""}">${esc(fmtD(o.due))}</dd></div>
+        <div><dt>الحالة</dt><dd>${OBS_ST[o.status] || ""}</dd></div>`}
+      </dl>
+      <div class="block"><h3>الوصف</h3><p>${esc(o.desc)}</p></div>
+      ${o.immediate ? `<div class="block"><h3>الإجراء الفوري المتخذ</h3><p>${esc(o.immediate)}</p></div>` : ""}
+      ${!good && o.action ? `<div class="block"><h3>الإجراء التصحيحي المطلوب</h3><p>${esc(o.action)}</p></div>` : ""}
+      ${!good && o.status === "closed" ? `<div class="block closed-box"><h3>إجراء الإغلاق</h3><p>${esc(o.closeNote || "—")}</p><small>أغلقها ${esc(nameOf(o.closedBy))} في ${esc(fmtD(o.closedAt))}</small></div>` : ""}
+      ${sh.closing ? `<div class="f"><label for="closeNote" class="req">ما الذي تم لمعالجة الملاحظة؟</label><textarea id="closeNote" rows="3" placeholder="مثال: رُكّبت الحواجز وتم التحقق ميدانيًا"></textarea><span class="hint">يُسجَّل الإغلاق باسمك وبتاريخ اليوم.</span></div>` : ""}
+      ${photo}
+      ${w && !good && o.status !== "closed" && !sh.closing ? `<div class="f"><label for="obsNote">إضافة تحديث</label><textarea id="obsNote" rows="2" placeholder="مثال: أُبلغ المقاول وبدأ التنفيذ"></textarea><div><button class="btn sm" type="button" data-act="obsNote" data-id="${esc(o.id)}">إضافة التحديث</button></div></div>` : ""}
+      ${histList(o.history)}
+    </div>
+    <div class="sheet-foot">${foot}</div>`;
+}
+
+async function loadPhoto() {
+  if (!S.sheet || S.sheet.kind !== "obsDetail") return;
+  const o = S.obs.get(S.sheet.id);
+  if (!o || !o.hasPhoto || photoCache.has(o.id)) return;
+  photoCache.set(o.id, "");
+  let src = null;
+  try { src = await Store.getPhoto(o.id); } catch { src = null; }
+  photoCache.set(o.id, src || "none");
+  if (S.sheet && S.sheet.id === o.id) drawSheet();
+}
+
+async function patchObs(id, fn, msg) {
+  const cur = S.obs.get(id); if (!cur) return false;
+  const o = clone(cur); fn(o); o.updatedAt = Date.now();
+  const ok = await Store.put("observations", id, o);
+  if (ok && msg) toast(msg);
+  return ok;
+}
+
+/* ---------- incidents ---------- */
+function vInc() {
+  const t = today();
+  const groups = {
+    all: ["الكل", () => true],
+    open: ["غير مغلقة", i => i.status !== "closed"],
+    rec: ["حالات مسجلة", i => incType(i).rec],
+    nm: ["حوادث وشيكة", i => i.type === "nm"],
+  };
+  const list = S.inc.filter(groups[S.incF][1]);
+  return `${banners()}
+  <div class="ph"><div><h1>سجل الحوادث</h1><p>الحوادث الوشيكة والإصابات والأضرار، ومتابعة التحقيق حتى الإغلاق</p></div>
+    <div class="actions">
+      ${S.canDownload ? `<button class="btn" type="button" data-act="exportInc">${I.dl}<span>تصدير CSV</span></button>` : ""}
+      ${canWrite() ? `<button class="btn primary" type="button" data-act="newInc">${I.plus}<span>الإبلاغ عن حادث</span></button>` : ""}
+    </div></div>
+  <div class="filters"><div class="segctl" role="group" aria-label="التصنيف">${Object.entries(groups).map(([k, [lb, fn]]) => `<button type="button" data-incf="${k}" aria-pressed="${S.incF === k}">${lb}<span class="c">${S.inc.filter(fn).length}</span></button>`).join("")}</div></div>
+  ${list.length ? `<div class="list">${list.map(i => `<article class="rec" role="button" tabindex="0" data-open-inc="${esc(i.id)}">
+      <span class="sev ${incType(i).c}"></span>
+      <div class="rec-main">
+        <div class="rec-top"><span class="code">${esc(i.code)}</span>${incTypePill(i)}${incStPill(i.status)}<span class="abbr">${esc(incType(i).en)}</span></div>
+        <div class="rec-title">${esc(i.location)}</div>
+        <p class="rec-desc">${esc(i.desc)}</p>
+        <div class="rec-meta"><span>${esc(fmtDM(i.date))}${i.time ? ` · <span class="ltr">${esc(i.time)}</span>` : ""}</span><span>أبلغ: ${esc(nameOf(i.reportedBy))}</span>${i.injured ? `<span>المصاب: ${esc(i.injured)}</span>` : ""}${+i.lostDays ? `<span>أيام ضائعة: ${esc(i.lostDays)}</span>` : ""}</div>
+      </div></article>`).join("")}</div>`
+    : S.inc.length ? `<div class="empty"><strong>لا توجد حوادث في هذا التصنيف</strong></div>`
+    : `<div class="empty"><strong>لا توجد حوادث مسجلة</strong>سجّل هنا الحوادث الوشيكة والإصابات وأضرار الممتلكات فور وقوعها. تُحسب المعدلات وعداد الأيام الآمنة تلقائيًا من هذا السجل.${canWrite() ? `<br><button class="btn primary" type="button" data-act="newInc">${I.plus}<span>الإبلاغ عن حادث</span></button>` : ""}</div>`}`;
+}
+
+function sIncForm() {
+  const i = S.sheet.id ? S.inc.find(x => x.id === S.sheet.id) : null;
+  const t = today();
+  const v = i || {date: t, time: nowHM(), location: "", type: "nm", injured: "", company: "", lostDays: "", desc: "", immediate: ""};
+  return `<form id="fInc" data-form="inc" autocomplete="off">
+  <div class="sheet-head"><div><h2>${i ? "تعديل بيانات الحادث" : "الإبلاغ عن حادث"}</h2><p>${i ? `<span class="code">${esc(i.code)}</span>` : "المُبلّغ: " + esc(nameOf(S.meId))}</p></div>${closeBtn}</div>
+  <div class="sheet-body"><div class="fgrid">
+    <div class="f"><label for="i_date" class="req">تاريخ الحادث</label><input type="date" id="i_date" name="date" value="${esc(v.date)}" max="${t}" required></div>
+    <div class="f"><label for="i_time">الوقت</label><input type="time" id="i_time" name="time" value="${esc(v.time || "")}"></div>
+    <div class="f full"><label for="i_loc" class="req">الموقع</label><input id="i_loc" name="location" list="siteList2" value="${esc(v.location)}" required><datalist id="siteList2">${S.settings.sites.map(s => `<option value="${esc(s)}"></option>`).join("")}</datalist></div>
+    <div class="f full"><label for="i_type" class="req">نوع الحادث</label><select id="i_type" name="type" required>${INC_TYPES.map(x => `<option value="${x.k}" ${v.type === x.k ? "selected" : ""}>${x.t} (${x.en})</option>`).join("")}</select><span class="hint">العلاج الطبي والعمل المقيّد والإصابة المضيعة للوقت والوفاة تُحتسب حالات مسجلة في معدل TRIR.</span></div>
+    <div class="f"><label for="i_inj">اسم المصاب (إن وجد)</label><input id="i_inj" name="injured" value="${esc(v.injured)}"></div>
+    <div class="f"><label for="i_co">الشركة / المقاول</label><input id="i_co" name="company" value="${esc(v.company)}"></div>
+    <div class="f"><label for="i_lost">أيام العمل الضائعة</label><input type="number" min="0" step="1" id="i_lost" name="lostDays" value="${esc(v.lostDays)}" inputmode="numeric"></div>
+    <div class="f full"><label for="i_desc" class="req">وصف ما حدث</label><textarea id="i_desc" name="desc" rows="4" required placeholder="تسلسل الأحداث، والنشاط الجاري، والمعدات المعنية">${esc(v.desc)}</textarea></div>
+    <div class="f full"><label for="i_imm">الإجراءات الفورية</label><textarea id="i_imm" name="immediate" rows="2" placeholder="الإسعاف، عزل المنطقة، إيقاف العمل، إبلاغ العميل…">${esc(v.immediate)}</textarea></div>
+  </div></div>
+  <div class="sheet-foot"><button type="submit" class="btn primary">${i ? "حفظ التعديلات" : "إرسال البلاغ"}</button><button type="button" class="btn" data-close>إلغاء</button></div>
+  </form>`;
+}
+
+async function submitInc(form, fd) {
+  const g = k => String(fd.get(k) || "").trim();
+  const now = Date.now();
+  const existing = S.sheet.id ? S.inc.find(x => x.id === S.sheet.id) : null;
+  const id = existing ? existing.id : rid();
+  const i = existing ? clone(existing) : {id, code: makeCode("INC"), createdAt: now, status: "reported", reportedBy: S.meId, history: [{at: now, by: S.meId, kind: "create"}]};
+  Object.assign(i, {date: g("date"), time: g("time"), location: g("location"), type: g("type"), injured: g("injured"), company: g("company"), lostDays: g("lostDays"), desc: g("desc"), immediate: g("immediate"), updatedAt: now});
+  if (existing) i.history = [...(i.history || []), {at: now, by: S.meId, kind: "edit"}];
+  if (!await Store.put("incidents", id, i)) return;
+  closeSheet();
+  toast(existing ? "حُفظت التعديلات" : `سُجّل البلاغ ${i.code}`);
+}
+
+function sIncDetail() {
+  const i = S.inc.find(x => x.id === S.sheet.id);
+  if (!i) return `<div class="sheet-head"><div><h2>البلاغ غير متاح</h2><p>ربما حُذف من قِبل عضو آخر.</p></div>${closeBtn}</div><div class="sheet-foot"><button class="btn" type="button" data-close>إغلاق</button></div>`;
+  const sh = S.sheet, w = canWrite(), lead = isLead(), mine = i.reportedBy === S.meId;
+  let foot = "";
+  if (sh.confirm) foot = `<div class="confirm-box"><p>حذف البلاغ ${esc(i.code)} نهائيًا؟ سيؤثر ذلك على المعدلات وعداد الأيام الآمنة.</p><button class="btn danger-solid sm" type="button" data-act="delInc" data-id="${esc(i.id)}">تأكيد الحذف</button><button class="btn sm" type="button" data-act="cancelDel">إلغاء</button></div>`;
+  else if (sh.closing) foot = `<button class="btn primary" type="button" data-act="incCloseConfirm" data-id="${esc(i.id)}">تأكيد إغلاق التحقيق</button><button class="btn" type="button" data-act="obsCloseCancel">رجوع</button>`;
+  else if (w) {
+    const b = [];
+    if (lead && i.status === "reported") b.push(`<button class="btn" type="button" data-act="incInvestigate" data-id="${esc(i.id)}">بدء التحقيق</button>`);
+    if (lead && i.status !== "closed") b.push(`<button class="btn primary" type="button" data-act="obsCloseMode">إغلاق التحقيق</button>`);
+    if (lead && i.status === "closed") b.push(`<button class="btn" type="button" data-act="incReopen" data-id="${esc(i.id)}">إعادة فتح</button>`);
+    if (!lead && i.status !== "closed") b.push(`<span class="tag">يُغلق التحقيق مدير السلامة أو مهندس السلامة.</span>`);
+    const e = [];
+    if (mine || lead) e.push(`<button class="btn ghost sm" type="button" data-act="editInc" data-id="${esc(i.id)}">${I.edit}<span>تعديل</span></button>`);
+    if (lead) e.push(`<button class="btn ghost sm danger" type="button" data-act="askDel">${I.trash}<span>حذف</span></button>`);
+    foot = b.join("") + `<div class="end">${e.join("")}</div>`;
+  } else foot = `<button class="btn" type="button" data-close>إغلاق</button>`;
+  return `<div class="sheet-head"><div>
+      <div class="rec-top"><span class="code">${esc(i.code)}</span>${incTypePill(i)}${incStPill(i.status)}<span class="abbr">${esc(incType(i).en)}</span></div>
+      <h2>${esc(incType(i).t)}</h2><p>${esc(i.location)}</p></div>${closeBtn}</div>
+    <div class="sheet-body">
+      <dl class="dl">
+        <div><dt>التاريخ والوقت</dt><dd>${esc(fmtDM(i.date))}${i.time ? ` · <span class="ltr">${esc(i.time)}</span>` : ""}</dd></div>
+        <div><dt>المُبلّغ</dt><dd>${esc(nameOf(i.reportedBy))}</dd></div>
+        <div><dt>المصاب</dt><dd>${esc(i.injured || "—")}</dd></div>
+        <div><dt>الشركة / المقاول</dt><dd>${esc(i.company || "—")}</dd></div>
+        <div><dt>أيام العمل الضائعة</dt><dd>${esc(i.lostDays || "0")}</dd></div>
+        <div><dt>حالة مسجلة</dt><dd>${incType(i).rec ? "نعم، تُحتسب في TRIR" : "لا"}</dd></div>
+      </dl>
+      <div class="block"><h3>وصف ما حدث</h3><p>${esc(i.desc)}</p></div>
+      ${i.immediate ? `<div class="block"><h3>الإجراءات الفورية</h3><p>${esc(i.immediate)}</p></div>` : ""}
+      ${i.status === "investigating" && i.investigator ? `<div class="block"><h3>المحقق</h3><p>${esc(nameOf(i.investigator))}</p></div>` : ""}
+      ${i.status === "closed" ? `<div class="block closed-box"><h3>نتيجة التحقيق</h3><p><b>السبب الجذري:</b> ${esc(i.rootCause || "—")}</p><p><b>الإجراءات التصحيحية:</b> ${esc(i.corrective || "—")}</p><small>أُغلق بواسطة ${esc(nameOf(i.closedBy))} في ${esc(fmtD(i.closedAt))}</small></div>` : ""}
+      ${sh.closing ? `<div class="f"><label for="rcNote" class="req">السبب الجذري</label><textarea id="rcNote" rows="3" placeholder="مثال: عدم تطبيق إجراء العزل والإقفال قبل الصيانة"></textarea></div>
+      <div class="f"><label for="caNote" class="req">الإجراءات التصحيحية والوقائية</label><textarea id="caNote" rows="3" placeholder="مثال: إعادة تدريب الفنيين على LOTO وتحديث تحليل مخاطر العمل"></textarea></div>` : ""}
+      ${histList(i.history)}
+    </div>
+    <div class="sheet-foot">${foot}</div>`;
+}
+
+async function patchInc(id, fn, msg) {
+  const cur = S.inc.find(x => x.id === id); if (!cur) return false;
+  const i = clone(cur); fn(i); i.updatedAt = Date.now();
+  const ok = await Store.put("incidents", id, i);
+  if (ok && msg) toast(msg);
+  return ok;
+}
+
+/* ---------- daily ---------- */
+function vDaily() {
+  const d = S.dayDate, t = today();
+  const doc = S.daily.find(x => x.date === d);
+  const ents = entriesOf(doc).sort((a, b) => (memberById(a.mid) || {order: 99}).order - (memberById(b.mid) || {order: 99}).order);
+  const reps = reporters();
+  const done = new Set(ents.map(e => e.mid));
+  const pending = reps.filter(m => !done.has(m.id));
+  const sum = ents.reduce((a, e) => { a.mp += +e.manpower || 0; a.mh += +e.manhours || 0; a.tbt += +e.tbtCount || 0; a.pm += +e.permits || 0; a.ins += +e.inspections || 0; return a; }, {mp: 0, mh: 0, tbt: 0, pm: 0, ins: 0});
+  const myEntry = done.has(S.meId);
+  const rows = [];
+  for (let k = 0; k < 14; k++) {
+    const dd = addDays(t, -k), dc = S.daily.find(x => x.date === dd), es = entriesOf(dc);
+    const s = es.reduce((a, e) => { a.mp += +e.manpower || 0; a.mh += +e.manhours || 0; a.tbt += +e.tbtCount || 0; a.pm += +e.permits || 0; return a; }, {mp: 0, mh: 0, tbt: 0, pm: 0});
+    rows.push({dd, n: es.length, ...s});
+  }
+  return `${banners()}
+  <div class="ph"><div><h1>التقارير اليومية</h1><p>تقرير ميداني من كل مسؤول سلامة: القوى العاملة، ساعات العمل، التوعية، والتصاريح</p></div>
+    <div class="actions">
+      ${S.canDownload ? `<button class="btn" type="button" data-act="exportDaily">${I.dl}<span>تصدير CSV</span></button>` : ""}
+      ${canWrite() ? `<button class="btn primary" type="button" data-act="newDaily">${myEntry ? I.edit : I.plus}<span>${myEntry ? "تعديل تقريري" : "إرسال تقريري"}</span></button>` : ""}
+    </div></div>
+  <div class="filters">
+    <div class="daynav">
+      <button class="btn sm" type="button" data-act="dayPrev" aria-label="اليوم السابق">${I.prev}</button>
+      <input type="date" id="dayPick" value="${esc(d)}" max="${t}" aria-label="تاريخ التقرير">
+      <button class="btn sm" type="button" data-act="dayNext" aria-label="اليوم التالي" ${d >= t ? "disabled" : ""}>${I.next}</button>
+      ${d !== t ? `<button class="btn sm ghost" type="button" data-act="dayToday">اليوم</button>` : ""}
+    </div>
+    <span class="muted" style="font-size:13px">${esc(fmtDL(d))}</span>
+  </div>
+  <div class="day-sum">
+    <div>التقارير المرسلة<b>${ents.length}<span class="muted" style="font-size:14px"> / ${reps.length}</span></b></div>
+    <div>القوى العاملة<b>${fmtN(sum.mp)}</b></div>
+    <div>ساعات العمل<b>${fmtN(sum.mh)}</b></div>
+    <div>حضور التوعية<b>${fmtN(sum.tbt)}</b></div>
+    <div>تصاريح العمل<b>${fmtN(sum.pm)}</b></div>
+    <div>جولات التفتيش<b>${fmtN(sum.ins)}</b></div>
+  </div>
+  ${ents.length ? `<div class="entries">${ents.map(e => { const m = memberById(e.mid); const canEd = canWrite() && (e.mid === S.meId || isLead()); return `<section class="entry">
+      <div class="entry-h">${avatar(m)}<div class="who"><b>${esc(memberName(m))}</b><span>${esc(e.site || "—")}</span></div>${canEd ? `<button class="icon-btn" type="button" data-act="editDaily" data-date="${esc(d)}" data-mid="${esc(e.mid)}" aria-label="تعديل التقرير">${I.edit}</button>` : ""}</div>
+      <div class="entry-n"><div>العمالة<b>${fmtN(e.manpower)}</b></div><div>ساعات<b>${fmtN(e.manhours)}</b></div><div>تصاريح<b>${fmtN(e.permits)}</b></div><div>تفتيش<b>${fmtN(e.inspections)}</b></div></div>
+      ${e.tbtTopic ? `<p><span class="lbl">اجتماع التوعية (${fmtN(e.tbtCount)} حاضر)</span>${esc(e.tbtTopic)}</p>` : ""}
+      ${e.activities ? `<p><span class="lbl">الأعمال الجارية</span>${esc(e.activities)}</p>` : ""}
+      ${e.issues ? `<p><span class="lbl">ملاحظات ومعوقات</span>${esc(e.issues)}</p>` : ""}
+    </section>`; }).join("")}</div>`
+    : `<div class="empty"><strong>لا توجد تقارير لهذا اليوم</strong>يرسل كل مسؤول سلامة تقريره اليومي من هذه الصفحة، وتُجمع ساعات العمل تلقائيًا لحساب المعدلات.${canWrite() ? `<br><button class="btn primary" type="button" data-act="newDaily">${I.plus}<span>إرسال تقريري</span></button>` : ""}</div>`}
+  ${pending.length && ents.length ? `<div class="pending"><div class="section-h"><h2>لم يُرسلوا بعد</h2></div><div class="chips">${pending.map(m => `<span class="chip">${avatar(m)}<span>${esc(memberName(m))}</span></span>`).join("")}</div></div>` : ""}
+  <div class="section-h"><h2>آخر 14 يومًا</h2></div>
+  <div class="panel tbl-wrap"><table>
+    <thead><tr><th>التاريخ</th><th>التقارير</th><th>القوى العاملة</th><th>ساعات العمل</th><th>حضور التوعية</th><th>التصاريح</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td><button class="link" type="button" data-day="${r.dd}">${esc(fmtDM(r.dd))}</button></td><td class="${r.n ? "" : "zero"}">${r.n} / ${reps.length}</td><td class="${r.mp ? "" : "zero"}">${fmtN(r.mp)}</td><td class="${r.mh ? "" : "zero"}">${fmtN(r.mh)}</td><td class="${r.tbt ? "" : "zero"}">${fmtN(r.tbt)}</td><td class="${r.pm ? "" : "zero"}">${fmtN(r.pm)}</td></tr>`).join("")}</tbody>
+  </table></div>`;
+}
+
+function sDailyForm() {
+  const sh = S.sheet;
+  const date = sh.date || S.dayDate;
+  const mid = sh.mid || S.meId;
+  const doc = S.daily.find(d => d.date === date);
+  const e = doc && doc.entries && doc.entries[mid] ? doc.entries[mid] : null;
+  const hrs = e ? e.hours : S.settings.defaultHours;
+  const m = memberById(mid);
+  const lead = isLead();
+  return `<form id="fDaily" data-form="daily" autocomplete="off">
+  <div class="sheet-head"><div><h2>${e ? "تعديل التقرير اليومي" : "التقرير اليومي"}</h2><p>${esc(memberName(m))} · ${esc(fmtDL(date))}</p></div>${closeBtn}</div>
+  <div class="sheet-body"><div class="fgrid">
+    <div class="f"><label for="d_date" class="req">التاريخ</label><input type="date" id="d_date" name="date" value="${esc(date)}" max="${today()}" required ${sh.edit ? "readonly" : ""}></div>
+    ${lead && !sh.edit ? `<div class="f"><label for="d_mid">مسؤول السلامة</label><select id="d_mid" name="mid">${reporters().map(x => `<option value="${esc(x.id)}" ${x.id === mid ? "selected" : ""}>${esc(memberName(x))}</option>`).join("")}</select></div>` : `<input type="hidden" name="mid" value="${esc(mid)}">`}
+    <div class="f ${lead && !sh.edit ? "full" : ""}"><label for="d_site" class="req">الموقع</label><input id="d_site" name="site" list="siteList3" value="${esc(e ? e.site : (m && m.site) || "")}" required><datalist id="siteList3">${S.settings.sites.map(s => `<option value="${esc(s)}"></option>`).join("")}</datalist></div>
+    <div class="f"><label for="d_mp" class="req">عدد العمالة في الموقع</label><input type="number" min="0" step="1" id="d_mp" name="manpower" value="${esc(e ? e.manpower : "")}" required inputmode="numeric"></div>
+    <div class="f"><label for="d_hrs">ساعات العمل للفرد</label><input type="number" min="0" max="24" step="0.5" id="d_hrs" name="hours" value="${esc(hrs)}" inputmode="decimal"></div>
+    <div class="f full"><label for="d_mh">إجمالي ساعات العمل</label><input type="number" min="0" step="0.5" id="d_mh" name="manhours" value="${esc(e ? e.manhours : "")}" ${e ? 'data-touched="1"' : ""} inputmode="decimal"><span class="hint">تُحسب تلقائيًا (العمالة × ساعات الفرد) ويمكنك تعديلها.</span></div>
+    <div class="f full"><label for="d_tbt">موضوع اجتماع التوعية (Toolbox Talk)</label><input id="d_tbt" name="tbtTopic" value="${esc(e ? e.tbtTopic : "")}" placeholder="مثال: مخاطر الإجهاد الحراري وشرب الماء"></div>
+    <div class="f"><label for="d_tbtn">عدد الحضور</label><input type="number" min="0" step="1" id="d_tbtn" name="tbtCount" value="${esc(e ? e.tbtCount : "")}" inputmode="numeric"></div>
+    <div class="f"><label for="d_pm">تصاريح العمل الصادرة</label><input type="number" min="0" step="1" id="d_pm" name="permits" value="${esc(e ? e.permits : "")}" inputmode="numeric"></div>
+    <div class="f"><label for="d_ins">جولات التفتيش</label><input type="number" min="0" step="1" id="d_ins" name="inspections" value="${esc(e ? e.inspections : "")}" inputmode="numeric"></div>
+    <div class="f full"><label for="d_act">الأعمال الجارية اليوم</label><textarea id="d_act" name="activities" rows="2" placeholder="مثال: صب خرسانة القواعد، تركيب سقالات المبنى B">${esc(e ? e.activities : "")}</textarea></div>
+    <div class="f full"><label for="d_iss">ملاحظات ومعوقات</label><textarea id="d_iss" name="issues" rows="2">${esc(e ? e.issues : "")}</textarea></div>
+  </div></div>
+  <div class="sheet-foot">
+    ${sh.confirm ? `<div class="confirm-box"><p>حذف هذا التقرير اليومي؟</p><button class="btn danger-solid sm" type="button" data-act="delDaily" data-date="${esc(date)}" data-mid="${esc(mid)}">تأكيد الحذف</button><button class="btn sm" type="button" data-act="cancelDel">إلغاء</button></div>`
+      : `<button type="submit" class="btn primary">${e ? "حفظ التعديلات" : "إرسال التقرير"}</button><button type="button" class="btn" data-close>إلغاء</button>${e && sh.edit ? `<div class="end"><button class="btn ghost sm danger" type="button" data-act="askDel">${I.trash}<span>حذف</span></button></div>` : ""}`}
+  </div>
+  </form>`;
+}
+
+async function submitDaily(form, fd) {
+  const g = k => String(fd.get(k) || "").trim();
+  const n = k => { const v = Number(g(k)); return Number.isFinite(v) && v >= 0 ? v : 0; };
+  const date = g("date"), mid = g("mid") || S.meId;
+  if (!date || !mid) return;
+  let mh = g("manhours") === "" ? n("manpower") * n("hours") : n("manhours");
+  const entry = {site: g("site"), manpower: n("manpower"), hours: n("hours"), manhours: mh, tbtTopic: g("tbtTopic"), tbtCount: n("tbtCount"), permits: n("permits"), inspections: n("inspections"), activities: g("activities"), issues: g("issues"), by: S.meId, at: Date.now()};
+  if (!await Store.putDaily(date, mid, entry)) return;
+  S.dayDate = date;
+  closeSheet();
+  toast("أُرسل التقرير اليومي");
+}
+
+/* ---------- team ---------- */
+function vTeam() {
+  const st = S.settings, mo = today().slice(0, 7);
+  const all = [...S.obs.values()];
+  const lead = canManageTeam();
+  return `${banners()}
+  <div class="ph"><div><h1>فريق السلامة</h1><p>مدير السلامة، مهندس السلامة، ومسؤولو السلامة في المواقع</p></div>
+    <div class="actions">${lead ? `<button class="btn primary" type="button" data-act="newMember">${I.plus}<span>إضافة عضو</span></button>` : ""}</div></div>
+  ${S.mode === "shared" && lead && S.team.length ? `<div class="banner info"><span>لإضافة عضو: أنشئ له حسابًا (بريد وكلمة مرور) من Firebase ضمن Authentication، ثم اكتب البريد نفسه في بياناته هنا. لا يستطيع أي حساب غير مضاف هنا الدخول إلى بيانات الفريق.</span></div>` : ""}
+  <section class="panel">
+    <h2>بيانات المشروع ${lead ? `<span class="more"><button class="btn sm" type="button" data-act="editSettings">${I.edit}<span>تعديل</span></button></span>` : ""}</h2>
+    <dl class="settings-dl">
+      <div><dt>الجهة / الشركة</dt><dd>${esc(st.orgName || "—")}</dd></div>
+      <div><dt>المشروع</dt><dd>${esc(st.project || "—")}</dd></div>
+      <div><dt>بداية عدّ الأيام الآمنة</dt><dd>${st.startDate ? esc(fmtDL(st.startDate)) : "غير محدد"}</dd></div>
+      <div><dt>ساعات العمل الافتراضية للفرد</dt><dd class="num">${esc(st.defaultHours)}</dd></div>
+      <div class="full" style="grid-column:1/-1"><dt>المواقع والمناطق</dt><dd>${st.sites.length ? `<div class="chips" style="margin-top:4px">${st.sites.map(s => `<span class="pill p-neutral">${esc(s)}</span>`).join("")}</div>` : "لم تُضف مواقع بعد. أضفها لتظهر كخيارات سريعة في النماذج."}</dd></div>
+    </dl>
+  </section>
+  <div class="section-h"><h2>الأعضاء (${S.team.length})</h2><span class="tag">${S.user ? `مسجّل الدخول بـ <span class="ltr">${esc(S.user.email)}</span>${me() ? " · " + esc(memberName(me())) : ""}` : ""}</span>${S.user ? `<button class="btn sm" type="button" data-act="logout">تسجيل الخروج</button>` : ""}</div>
+  ${S.team.length ? `<div class="team-grid">${S.team.map(m => {
+      const obsN = all.filter(o => o.reportedBy === m.id && (o.date || "").startsWith(mo)).length;
+      const repN = S.daily.filter(d => d.date.startsWith(mo) && d.entries && d.entries[m.id]).length;
+      const canEd = canWrite() && (lead || m.id === S.meId);
+      return `<section class="member">
+        <div class="member-h">${avatar(m, "lg")}<div class="who"><b class="${m.name ? "" : "placeholder"}">${esc(memberName(m))}</b><span>${esc(ROLES[m.role])}</span> ${m.id === S.meId ? `<span class="me-tag">أنت</span>` : ""}</div>${canEd ? `<button class="icon-btn" type="button" data-act="editMember" data-id="${esc(m.id)}" aria-label="تعديل بيانات العضو">${I.edit}</button>` : ""}</div>
+        <dl><dt>الموقع</dt><dd>${esc(m.site || "—")}</dd><dt>الجوال</dt><dd>${m.phone ? `<span class="ltr" style="user-select:all">${esc(m.phone)}</span>` : "—"}</dd><dt>الحساب</dt><dd>${m.email ? `<span class="ltr">${esc(m.email)}</span>` : `<span class="muted">غير مرتبط</span>`}</dd></dl>
+        ${(!m.name || (!m.email && lead)) && canEd ? `<button class="link" type="button" data-act="editMember" data-id="${esc(m.id)}" style="text-align:start">${!m.name ? "أضف الاسم والبريد والجوال" : "أضف البريد الإلكتروني للحساب"}</button>` : ""}
+        <div class="member-stats"><span><b>${obsN}</b>ملاحظات هذا الشهر</span>${m.role === "manager" ? "" : `<span><b>${repN}</b>تقارير يومية</span>`}</div>
+      </section>`; }).join("")}</div>`
+    : `<div class="empty"><strong>لا يوجد أعضاء بعد</strong>أنشئ قائمة الفريق (مدير السلامة، مهندس السلامة، 7 مسؤولي سلامة) ثم أضف الأسماء والبريد الإلكتروني لكل عضو.${lead ? `<br><button class="btn primary" type="button" data-act="createTeam">${I.plus}<span>إنشاء قائمة الفريق</span></button>` : ""}</div>`}`;
+}
+
+function sMemberForm() {
+  const sh = S.sheet;
+  const m = sh.id ? memberById(sh.id) : null;
+  const lead = canManageTeam();
+  const v = m || {name: "", role: "officer", site: "", phone: "", email: ""};
+  const canDel = m && isManager() && m.id !== S.meId;
+  return `<form id="fMember" data-form="member" autocomplete="off">
+  <div class="sheet-head"><div><h2>${m ? "بيانات العضو" : "إضافة عضو للفريق"}</h2><p>${m ? esc(ROLES[m.role]) : "يظهر الاسم في السجلات والتقارير"}</p></div>${closeBtn}</div>
+  <div class="sheet-body"><div class="fgrid">
+    <div class="f full"><label for="m_name" class="req">الاسم</label><input id="m_name" name="name" value="${esc(v.name)}" required placeholder="الاسم كما يظهر في التقارير"></div>
+    <div class="f"><label for="m_role">الدور</label><select id="m_role" name="role" ${lead ? "" : "disabled"}>${Object.entries(ROLES).map(([k, t]) => `<option value="${k}" ${v.role === k ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+    <div class="f"><label for="m_phone">رقم الجوال</label><input id="m_phone" name="phone" type="tel" dir="ltr" value="${esc(v.phone)}" placeholder="05XXXXXXXX" inputmode="tel"></div>
+    <div class="f full"><label for="m_email">البريد الإلكتروني لحساب الدخول</label><input id="m_email" name="email" type="email" dir="ltr" value="${esc(v.email || "")}" placeholder="name@company.com" inputmode="email" ${lead ? "" : "disabled"}><span class="hint">${lead ? "يجب أن يطابق البريد الذي أُنشئ له في Firebase. يربط العضو بحسابه ويسمح له بالدخول إلى بيانات الفريق." : "يعدّله مدير السلامة أو مهندس السلامة."}</span></div>
+    <div class="f full"><label for="m_site">الموقع المكلّف به</label><input id="m_site" name="site" list="siteList4" value="${esc(v.site)}"><datalist id="siteList4">${S.settings.sites.map(s => `<option value="${esc(s)}"></option>`).join("")}</datalist></div>
+  </div></div>
+  <div class="sheet-foot">
+    ${sh.confirm ? `<div class="confirm-box"><p>إزالة ${esc(memberName(m))} من الفريق؟ تبقى سجلاته محفوظة.</p><button class="btn danger-solid sm" type="button" data-act="delMember" data-id="${esc(m.id)}">تأكيد الإزالة</button><button class="btn sm" type="button" data-act="cancelDel">إلغاء</button></div>`
+      : `<button type="submit" class="btn primary">حفظ</button><button type="button" class="btn" data-close>إلغاء</button>${canDel ? `<div class="end"><button class="btn ghost sm danger" type="button" data-act="askDel">${I.trash}<span>إزالة من الفريق</span></button></div>` : ""}`}
+  </div></form>`;
+}
+
+async function submitMember(form, fd) {
+  const g = k => String(fd.get(k) || "").trim();
+  const m = S.sheet.id ? memberById(S.sheet.id) : null;
+  const lead = canManageTeam();
+  const id = m ? m.id : rid();
+  const order = m ? m.order : Math.max(0, ...S.team.map(x => x.order || 0)) + 1;
+  const email = lead ? g("email").toLowerCase() : (m && m.email ? m.email : "");
+  if (email && S.team.some(x => x.id !== id && (x.email || "").toLowerCase() === email)) { toast("هذا البريد مرتبط بعضو آخر في الفريق."); return; }
+  const data = {...(m ? clone(m) : {}), id, name: g("name"), role: lead ? (g("role") || "officer") : (m ? m.role : "officer"), phone: g("phone"), site: g("site"), email, order};
+  if (!await Store.put("team", id, data)) return;
+  if (lead && (!m || (m.email || "") !== email)) await syncAccess(S.team.filter(x => x.id !== id).concat([data]));
+  closeSheet();
+  toast("حُفظت بيانات العضو");
+}
+
+function sSettingsForm() {
+  const st = S.settings;
+  return `<form id="fSettings" data-form="settings" autocomplete="off">
+  <div class="sheet-head"><div><h2>بيانات المشروع</h2><p>تظهر في رأس الصفحة وفي ملخص اليوم</p></div>${closeBtn}</div>
+  <div class="sheet-body"><div class="fgrid">
+    <div class="f"><label for="s_org">الجهة / الشركة</label><input id="s_org" name="orgName" value="${esc(st.orgName)}"></div>
+    <div class="f"><label for="s_proj">المشروع</label><input id="s_proj" name="project" value="${esc(st.project)}"></div>
+    <div class="f"><label for="s_start">بداية عدّ الأيام الآمنة</label><input type="date" id="s_start" name="startDate" value="${esc(st.startDate)}"><span class="hint">يُستخدم إذا لم تُسجَّل أي إصابة مضيعة للوقت.</span></div>
+    <div class="f"><label for="s_hrs">ساعات العمل الافتراضية للفرد</label><input type="number" min="1" max="24" step="0.5" id="s_hrs" name="defaultHours" value="${esc(st.defaultHours)}" inputmode="decimal"></div>
+    <div class="f full"><label for="s_sites">المواقع والمناطق</label><textarea id="s_sites" name="sites" rows="5" placeholder="موقع واحد في كل سطر">${esc(st.sites.join("\n"))}</textarea></div>
+  </div></div>
+  <div class="sheet-foot"><button type="submit" class="btn primary">حفظ</button><button type="button" class="btn" data-close>إلغاء</button></div>
+  </form>`;
+}
+
+async function submitSettings(form, fd) {
+  const g = k => String(fd.get(k) || "").trim();
+  const data = {orgName: g("orgName"), project: g("project"), startDate: g("startDate"), defaultHours: Number(g("defaultHours")) || 10, sites: g("sites").split(/\n+/).map(s => s.trim()).filter(Boolean).slice(0, 60)};
+  if (!await Store.put("config", "settings", data)) return;
+  closeSheet(); toast("حُفظت بيانات المشروع");
+}
+
+function sWho() {
+  const m = me();
+  if (m) return `<div class="sheet-head"><div><h2>حسابك</h2><p>مسجّل الدخول بـ <span class="ltr">${esc(S.user ? S.user.email : "")}</span></p></div>${closeBtn}</div>
+  <div class="sheet-body"><div class="who-btn cur" style="cursor:default">${avatar(m)}<span class="who"><b>${esc(memberName(m))}</b><span>${esc(ROLES[m.role])}${m.site ? " · " + esc(m.site) : ""}</span></span><span class="me-tag">مرتبط</span></div>
+  <p class="muted" style="margin:0;font-size:13px">تُنسب كل السجلات التي تضيفها إلى هذا الاسم. لتغيير الربط، يعدّل مدير السلامة البريد في صفحة الفريق.</p></div>
+  <div class="sheet-foot"><button class="btn" type="button" data-act="logout">تسجيل الخروج</button><button class="btn" type="button" data-close>إغلاق</button></div>`;
+  return `<div class="sheet-head"><div><h2>اختر اسمك في قائمة الفريق</h2><p>يُربط حسابك (<span class="ltr">${esc(S.user ? S.user.email : "")}</span>) بالاسم الذي تختاره، وتُنسب إليه سجلاتك على كل الأجهزة.</p></div>${closeBtn}</div>
+  <div class="sheet-body">
+    ${S.team.length ? `<div class="who-list">${S.team.map(x => { const taken = !!x.email; return `<button type="button" class="who-btn" data-me="${esc(x.id)}" ${taken ? "disabled" : ""} style="${taken ? "opacity:.55;cursor:not-allowed" : ""}">${avatar(x)}<span class="who"><b>${esc(memberName(x))}</b><span>${esc(ROLES[x.role])}${x.site ? " · " + esc(x.site) : ""}</span></span>${taken ? `<span class="tag">مرتبط بحساب آخر</span>` : ""}</button>`; }).join("")}</div>`
+      : `<div class="empty"><strong>قائمة الفريق فارغة</strong>أنشئ القائمة (مدير السلامة، مهندس السلامة، 7 مسؤولي سلامة) ثم اختر اسمك.${canWrite() ? `<br><button class="btn primary" type="button" data-act="createTeam">${I.plus}<span>إنشاء قائمة الفريق</span></button>` : ""}</div>`}
+  </div>
+  <div class="sheet-foot"><button class="btn" type="button" data-act="logout">تسجيل الخروج</button></div>`;
+}
+
+function sCopy() {
+  return `<div class="sheet-head"><div><h2>ملخص اليوم</h2><p>حدّد النص وانسخه يدويًا</p></div>${closeBtn}</div>
+  <div class="sheet-body"><textarea id="copyTxt" rows="14" readonly>${esc(S.sheet.text || "")}</textarea></div>
+  <div class="sheet-foot"><button class="btn" type="button" data-close>تم</button></div>`;
+}
+
+/* ---------- sheets ---------- */
+const VIEW_FN = {home: vHome, obs: vObs, inc: vInc, daily: vDaily, team: vTeam};
+const SHEETS = {
+  obsForm: {html: sObsForm}, obsDetail: {html: sObsDetail, live: true, after: loadPhoto},
+  incForm: {html: sIncForm}, incDetail: {html: sIncDetail, live: true},
+  dailyForm: {html: sDailyForm}, memberForm: {html: sMemberForm}, settingsForm: {html: sSettingsForm},
+  who: {html: sWho, live: true}, copy: {html: sCopy, after: () => { const x = $("#copyTxt"); if (x) { x.focus(); x.select(); } }},
+};
+let lastFocus = null;
+function drawSheet() {
+  const wrap = $("#sheetWrap"), body = $("#sheetBody"), sheet = $("#sheet");
+  if (!S.sheet) { wrap.hidden = true; body.innerHTML = ""; document.body.style.overflow = ""; return; }
+  const def = SHEETS[S.sheet.kind];
+  wrap.hidden = false; document.body.style.overflow = "hidden";
+  const sc = sheet.scrollTop;
+  withPreserved(body, () => { body.innerHTML = def.html(); });
+  sheet.scrollTop = sc;
+  if (def.after) def.after();
+}
+function openSheet(kind, opts = {}) {
+  lastFocus = document.activeElement;
+  S.sheet = {kind, ...opts};
+  $("#sheetBody").innerHTML = "";
+  drawSheet();
+  $("#sheet").scrollTop = 0;
+  const first = $("#sheetBody").querySelector("input:not([type=hidden]):not([type=file]):not([readonly]),select,textarea,.who-btn,button");
+  if (first && window.matchMedia("(min-width: 641px)").matches) first.focus({preventScroll: true});
+}
+function closeSheet() {
+  S.sheet = null; drawSheet();
+  if (lastFocus && lastFocus.isConnected) try { lastFocus.focus({preventScroll: true}); } catch {}
+}
+function sheetMode(patch) { if (!S.sheet) return; Object.assign(S.sheet, patch); drawSheet(); }
+
+/* ---------- toast ---------- */
+let toastT = 0;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3600);
+}
+
+/* ---------- summary & export ---------- */
+function summaryText() {
+  const t = today(), all = [...S.obs.values()];
+  const reps = reporters();
+  const tEnt = entriesOf(S.daily.find(d => d.date === t));
+  const done = new Set(tEnt.map(e => e.mid));
+  const pend = reps.filter(m => !done.has(m.id));
+  const s = tEnt.reduce((a, e) => { a.mp += +e.manpower || 0; a.mh += +e.manhours || 0; a.tbt += +e.tbtCount || 0; a.pm += +e.permits || 0; return a; }, {mp: 0, mh: 0, tbt: 0, pm: 0});
+  const topics = tEnt.map(e => e.tbtTopic).filter(Boolean);
+  const obsT = all.filter(o => o.date === t);
+  const closedT = all.filter(o => o.status === "closed" && o.closedAt === t && o.type !== "good").length;
+  const open = all.filter(o => o.status !== "closed");
+  const od = open.filter(isOverdue).length;
+  const incT = S.inc.filter(i => i.date === t);
+  const lastLti = S.inc.filter(i => incType(i).lti).map(i => i.date).filter(Boolean).sort().pop();
+  const base = lastLti || S.settings.startDate;
+  const days = base ? Math.max(0, daysBetween(base, t)) : null;
+  const L = [
+    "*ملخص السلامة اليومي*",
+    fmtDL(t),
+    [S.settings.orgName, S.settings.project].filter(Boolean).join(" | ") || null,
+    "",
+    `التقارير اليومية: ${done.size} من ${reps.length}`,
+    pend.length ? `لم يُرسل بعد: ${pend.map(memberName).join("، ")}` : null,
+    `القوى العاملة: ${fmtN(s.mp)} | ساعات العمل: ${fmtN(s.mh)}`,
+    `اجتماعات التوعية: ${topics.length} (الحضور ${fmtN(s.tbt)})${topics.length ? "\n- " + topics.join("\n- ") : ""}`,
+    `تصاريح العمل الصادرة: ${fmtN(s.pm)}`,
+    "",
+    `ملاحظات اليوم: ${obsT.length} (حرجة ${obsT.filter(o => o.risk === "crit").length}، عالية ${obsT.filter(o => o.risk === "high").length}، إيجابية ${obsT.filter(o => o.type === "good").length})`,
+    `أُغلق اليوم: ${closedT} | المفتوحة: ${open.length} (متأخرة ${od})`,
+    incT.length ? `حوادث اليوم: ${incT.map(i => incType(i).t + " - " + i.location).join("، ")}` : "لا توجد حوادث مسجلة اليوم",
+    days !== null ? `أيام بدون إصابة مضيعة للوقت: ${days}` : null,
+  ];
+  return L.filter(x => x !== null).join("\n");
+}
+
+async function copySummary() {
+  const text = summaryText();
+  if (navigator.share) {
+    try { await navigator.share({text}); return; }
+    catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("no clipboard");
+    await navigator.clipboard.writeText(text);
+    toast("نُسخ ملخص اليوم. الصقه في مجموعة الواتساب.");
+  } catch {
+    openSheet("copy", {text});
+  }
+}
+
+const csvCell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+async function saveCSV(name, rows) {
+  const csv = "﻿" + rows.map(r => r.map(csvCell).join(",")).join("\r\n");
+  const blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
+  try {
+    const file = new File([blob], name, {type: "text/csv"});
+    if (navigator.canShare && navigator.canShare({files: [file]})) {
+      await navigator.share({files: [file], title: name});
+      return;
+    }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  toast("جُهّز الملف للتنزيل");
+}
+function exportObs() {
+  const rows = [["الرقم", "التاريخ", "الوقت", "الموقع", "الفئة", "النوع", "الخطورة", "الوصف", "الإجراء الفوري", "الإجراء التصحيحي", "الجهة المسؤولة", "تاريخ الاستحقاق", "الحالة", "المُبلّغ", "تاريخ الإغلاق", "أغلقها", "إجراء الإغلاق"]];
+  [...S.obs.values()].sort((a, b) => (b.date || "").localeCompare(a.date || "")).forEach(o => rows.push([o.code, o.date, o.time, o.location, o.category, typeLabel(o.type), riskOf(o.risk).t, o.desc, o.immediate, o.action, o.responsible, o.due, OBS_ST[o.status], nameOf(o.reportedBy), o.closedAt || "", o.closedBy ? nameOf(o.closedBy) : "", o.closeNote || ""]));
+  saveCSV(`ملاحظات-السلامة-${today()}.csv`, rows);
+}
+function exportInc() {
+  const rows = [["الرقم", "التاريخ", "الوقت", "الموقع", "النوع", "Type", "حالة مسجلة", "المصاب", "الشركة", "أيام ضائعة", "الوصف", "الإجراءات الفورية", "الحالة", "المُبلّغ", "السبب الجذري", "الإجراءات التصحيحية", "تاريخ الإغلاق"]];
+  S.inc.forEach(i => rows.push([i.code, i.date, i.time, i.location, incType(i).t, incType(i).en, incType(i).rec ? "نعم" : "لا", i.injured, i.company, i.lostDays, i.desc, i.immediate, INC_ST[i.status], nameOf(i.reportedBy), i.rootCause || "", i.corrective || "", i.closedAt || ""]));
+  saveCSV(`سجل-الحوادث-${today()}.csv`, rows);
+}
+function exportDaily() {
+  const rows = [["التاريخ", "مسؤول السلامة", "الموقع", "العمالة", "ساعات الفرد", "إجمالي ساعات العمل", "موضوع التوعية", "حضور التوعية", "التصاريح", "التفتيش", "الأعمال الجارية", "ملاحظات ومعوقات"]];
+  S.daily.forEach(d => entriesOf(d).forEach(e => rows.push([d.date, nameOf(e.mid), e.site, e.manpower, e.hours, e.manhours, e.tbtTopic, e.tbtCount, e.permits, e.inspections, e.activities, e.issues])));
+  saveCSV(`التقارير-اليومية-${today()}.csv`, rows);
+}
+
+/* ---------- actions ---------- */
+function needMe(fn) {
+  if (!canWrite()) { toast(S.mode === "loading" ? "انتظر حتى يكتمل الاتصال." : "حسابك لا يملك صلاحية الإضافة حاليًا."); return; }
+  if (!me()) { S.pendingFn = fn; S.returnSheet = S.sheet && S.sheet.kind !== "who" ? {...S.sheet, confirm: false, closing: false} : null; openSheet("who"); return; }
+  fn();
+}
+function setView(v) {
+  S.view = v; lsSet("hse_view", v);
+  draw(); window.scrollTo({top: 0});
+}
+const ACT = {
+  who: () => openSheet("who"),
+  newObs: () => needMe(() => openSheet("obsForm")),
+  newInc: () => needMe(() => openSheet("incForm")),
+  newDaily: () => needMe(() => { const has = !!(S.daily.find(d => d.date === S.dayDate) || {entries: {}}).entries?.[S.meId]; openSheet("dailyForm", {date: S.dayDate, mid: S.meId, edit: has}); }),
+  copySummary, exportObs, exportInc, exportDaily,
+  goObs: () => { S.f.st = "active"; S.f.risk = "all"; S.f.who = "all"; S.f.q = ""; setView("obs"); },
+  dayPrev: () => { S.dayDate = addDays(S.dayDate, -1); render(); },
+  dayNext: () => { if (S.dayDate < today()) { S.dayDate = addDays(S.dayDate, 1); render(); } },
+  dayToday: () => { S.dayDate = today(); render(); },
+  editObs: el => needMe(() => openSheet("obsForm", {id: el.dataset.id})),
+  obsProgress: el => needMe(() => patchObs(el.dataset.id, o => { o.status = "progress"; o.history = [...(o.history || []), {at: Date.now(), by: S.meId, kind: "progress"}]; }, "بدأت معالجة الملاحظة")),
+  obsCloseMode: () => needMe(() => { sheetMode({closing: true}); const x = $("#closeNote") || $("#rcNote"); if (x) x.focus(); }),
+  obsCloseCancel: () => sheetMode({closing: false}),
+  obsCloseConfirm: async el => {
+    const note = ($("#closeNote") || {}).value?.trim();
+    if (!note) { toast("اكتب ما تم لمعالجة الملاحظة قبل إغلاقها."); $("#closeNote")?.focus(); return; }
+    const ok = await patchObs(el.dataset.id, o => { o.status = "closed"; o.closedAt = today(); o.closedBy = S.meId; o.closeNote = note; o.history = [...(o.history || []), {at: Date.now(), by: S.meId, kind: "close", text: note}]; }, "أُغلقت الملاحظة");
+    if (ok && S.sheet) sheetMode({closing: false});
+  },
+  obsReopen: el => needMe(() => patchObs(el.dataset.id, o => { o.status = "open"; delete o.closedAt; delete o.closedBy; delete o.closeNote; o.history = [...(o.history || []), {at: Date.now(), by: S.meId, kind: "reopen"}]; }, "أُعيد فتح الملاحظة")),
+  obsNote: el => needMe(async () => {
+    const x = $("#obsNote"); const text = x ? x.value.trim() : "";
+    if (!text) { toast("اكتب التحديث أولًا."); x?.focus(); return; }
+    const ok = await patchObs(el.dataset.id, o => { o.history = [...(o.history || []), {at: Date.now(), by: S.meId, kind: "note", text}]; }, "أُضيف التحديث");
+    const y = $("#obsNote"); if (ok && y) y.value = "";
+  }),
+  askDel: () => sheetMode({confirm: true}),
+  cancelDel: () => sheetMode({confirm: false}),
+  delObs: async el => {
+    const id = el.dataset.id, o = S.obs.get(id);
+    if (!await Store.del("observations", id)) return;
+    if (o && o.hasPhoto) { await Store.del("photos", id); photoCache.delete(id); }
+    closeSheet(); toast("حُذفت الملاحظة");
+  },
+  editInc: el => needMe(() => openSheet("incForm", {id: el.dataset.id})),
+  incInvestigate: el => needMe(() => patchInc(el.dataset.id, i => { i.status = "investigating"; i.investigator = S.meId; i.history = [...(i.history || []), {at: Date.now(), by: S.meId, kind: "investigate"}]; }, "بدأ التحقيق")),
+  incCloseConfirm: async el => {
+    const rc = ($("#rcNote") || {}).value?.trim(), ca = ($("#caNote") || {}).value?.trim();
+    if (!rc || !ca) { toast("اكتب السبب الجذري والإجراءات التصحيحية قبل الإغلاق."); return; }
+    const ok = await patchInc(el.dataset.id, i => { i.status = "closed"; i.rootCause = rc; i.corrective = ca; i.closedAt = today(); i.closedBy = S.meId; i.history = [...(i.history || []), {at: Date.now(), by: S.meId, kind: "close", text: rc}]; }, "أُغلق التحقيق");
+    if (ok && S.sheet) sheetMode({closing: false});
+  },
+  incReopen: el => needMe(() => patchInc(el.dataset.id, i => { i.status = "investigating"; i.history = [...(i.history || []), {at: Date.now(), by: S.meId, kind: "reopen"}]; }, "أُعيد فتح التحقيق")),
+  delInc: async el => { if (!await Store.del("incidents", el.dataset.id)) return; closeSheet(); toast("حُذف البلاغ"); },
+  editDaily: el => needMe(() => openSheet("dailyForm", {date: el.dataset.date, mid: el.dataset.mid, edit: true})),
+  delDaily: async el => { if (!await Store.delDaily(el.dataset.date, el.dataset.mid)) return; closeSheet(); toast("حُذف التقرير"); },
+  newMember: () => { if (!canManageTeam()) { toast("إضافة الأعضاء متاحة لمدير السلامة ومهندس السلامة."); return; } openSheet("memberForm"); },
+  editMember: el => openSheet("memberForm", {id: el.dataset.id}),
+  delMember: async el => {
+    const id = el.dataset.id;
+    const rest = S.team.filter(x => x.id !== id);
+    if (!await Store.del("team", id)) return;
+    await syncAccess(rest);
+    closeSheet(); toast("أُزيل العضو من الفريق");
+  },
+  editSettings: () => openSheet("settingsForm"),
+};
+const SUBMIT = {obs: submitObs, inc: submitInc, daily: submitDaily, member: submitMember, settings: submitSettings};
+
+async function linkMe(id) {
+  const m = memberById(id);
+  if (!m || !S.user) return;
+  if (m.email && m.email.toLowerCase() !== S.user.email) { toast("هذا الاسم مرتبط بحساب آخر."); return; }
+  if (S.team.some(x => x.id !== id && (x.email || "").toLowerCase() === S.user.email)) { toast("حسابك مرتبط باسم آخر في القائمة."); return; }
+  const upd = {...clone(m), email: S.user.email};
+  if (!await Store.put("team", id, upd)) return;
+  S.meId = id;
+  await syncAccess(S.team.map(x => x.id === id ? upd : x));
+  const back = S.returnSheet, fn = S.pendingFn;
+  S.returnSheet = null; S.pendingFn = null;
+  closeSheet(); toast("رُبط حسابك باسم " + memberName(upd));
+  if (back) { const {kind, ...rest} = back; openSheet(kind, rest); }
+  render();
+  if (fn) setTimeout(fn, 0);
+}
+Object.assign(ACT, {
+  reload: () => location.reload(),
+  logout: async () => {
+    if (!Store.auth) return;
+    try { await Fu.signOut(Store.auth); } catch { toast("تعذّر تسجيل الخروج."); return; }
+    const p = $("#l_pass"); if (p) p.value = "";
+  },
+  resetPass: async () => {
+    const email = ($("#l_email") || {}).value?.trim();
+    if (!email) { toast("اكتب بريدك الإلكتروني أولًا ثم اضغط «نسيت كلمة المرور»."); $("#l_email")?.focus(); return; }
+    try { await Fu.sendPasswordResetEmail(Store.auth, email); toast("إن كان البريد مسجّلًا، ستصلك رسالة لتعيين كلمة مرور جديدة."); }
+    catch (e) { toast(authMsg(e && e.code)); }
+  },
+  createTeam: async () => {
+    if (!canWrite()) return;
+    if (S.team.length) { openSheet("who"); return; }
+    if (await Store.putMany(defaultTeam().map(m => ["team", m.id, m]))) { toast("أُنشئت قائمة الفريق. اختر اسمك لربطه بحسابك."); openSheet("who"); }
+  },
+});
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act],[data-nav],[data-open-obs],[data-open-inc],[data-close],[data-f],[data-incf],[data-me],[data-day]");
+  if (!el) return;
+  if (el.hasAttribute("data-close")) { closeSheet(); return; }
+  if (el.dataset.nav) { if (S.sheet) closeSheet(); setView(el.dataset.nav); return; }
+  if (el.dataset.openObs) { openSheet("obsDetail", {id: el.dataset.openObs}); return; }
+  if (el.dataset.openInc) { openSheet("incDetail", {id: el.dataset.openInc}); return; }
+  if (el.dataset.f) { const [k, v] = el.dataset.f.split(":"); S.f[k] = v; render(); return; }
+  if (el.dataset.incf) { S.incF = el.dataset.incf; render(); return; }
+  if (el.dataset.day) { S.dayDate = el.dataset.day; render(); window.scrollTo({top: 0}); return; }
+  if (el.dataset.me) { linkMe(el.dataset.me); return; }
+  const fn = ACT[el.dataset.act];
+  if (fn) fn(el);
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && S.sheet) { closeSheet(); return; }
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches('[role="button"][tabindex]')) { e.preventDefault(); e.target.click(); }
+});
+document.addEventListener("input", e => {
+  const x = e.target;
+  if (x.id === "f_q") { S.f.q = x.value; render(); return; }
+  if (x.id === "o_due" || x.id === "d_mh") { x.dataset.touched = "1"; return; }
+  if (x.id === "d_mp" || x.id === "d_hrs") {
+    const mh = $("#d_mh"); if (!mh || mh.dataset.touched) return;
+    const mp = Number($("#d_mp").value) || 0, h = Number($("#d_hrs").value) || 0;
+    mh.value = mp && h ? String(Math.round(mp * h * 10) / 10) : "";
+  }
+});
+document.addEventListener("change", e => {
+  const x = e.target;
+  if (x.id === "f_risk") { S.f.risk = x.value; render(); return; }
+  if (x.id === "f_who") { S.f.who = x.value; render(); return; }
+  if (x.id === "dayPick") { if (x.value) { S.dayDate = x.value > today() ? today() : x.value; render(); } return; }
+  if (x.name === "type" && x.form && x.form.id === "fObs") { $("#actionBlock").hidden = x.value === "good"; return; }
+  if ((x.name === "risk" || x.id === "o_date") && x.form && x.form.id === "fObs") {
+    const due = $("#o_due"); if (!due || due.dataset.touched) return;
+    const r = riskOf((x.form.querySelector('input[name="risk"]:checked') || {}).value);
+    const d = $("#o_date").value || today();
+    due.value = addDays(d, r.days);
+  }
+});
+document.addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target;
+  if (form.dataset.form === "login") { await doLogin(form); return; }
+  const fn = SUBMIT[form.dataset.form];
+  if (!fn) return;
+  if (!canWrite()) { toast("لا يمكن الحفظ الآن. تحقّق من تسجيل الدخول وصلاحية حسابك."); return; }
+  if (form.dataset.form !== "member" && form.dataset.form !== "settings" && !me()) { toast("اختر اسمك أولًا."); openSheet("who"); return; }
+  const btn = form.querySelector('[type="submit"]');
+  if (btn) { if (btn.disabled) return; btn.disabled = true; }
+  try { await fn(form, new FormData(form)); }
+  finally { if (btn && btn.isConnected) btn.disabled = false; }
+});
+
+boot();
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
+})();
+</script>
+</body>
+</html>
